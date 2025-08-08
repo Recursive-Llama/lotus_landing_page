@@ -1,6 +1,6 @@
 "use client";
 
-import { COLOR_STOPS, GLYPHS, SPIRAL } from "../lib/config";
+import { COLOR_STOPS, GLYPHS } from "../lib/config";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "../lib/useReducedMotion";
 
@@ -33,27 +33,7 @@ function hexToRgb(hex: string): [number, number, number] {
   ];
 }
 
-function computePositions(width: number, height: number) {
-  const { a, b, scale, clockwise, turns } = SPIRAL as typeof SPIRAL & { turns: number };
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const direction = clockwise ? 1 : -1;
-  // Shared pixelScale with shader
-  const maxTheta = Math.PI * 2 * turns;
-  const baseRadius = a * Math.exp(b * maxTheta);
-  const fit = 0.48;
-  const pixelScale = (Math.min(width, height) * fit) / baseRadius;
-
-  return GLYPHS.map((g) => {
-    const theta = direction * (Math.PI * 2 * g.t);
-    const r = a * Math.exp(b * theta) * pixelScale;
-    const x = centerX + r * Math.cos(theta);
-    const y = centerY + r * Math.sin(theta);
-    const t01 = Math.max(0, Math.min(1, (theta + Math.PI) / (2 * Math.PI * turns)));
-    const color = interpolateColor(t01);
-    return { ...g, x, y, color } as typeof g & { x: number; y: number; color: string };
-  });
-}
+// (Old spiral placement removed; we now render a side menu and color via palette)
 
 export default function GlyphOrbs() {
   const [size, setSize] = useState<[number, number]>([0, 0]);
