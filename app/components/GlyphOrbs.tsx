@@ -1,7 +1,7 @@
 "use client";
 
 import { COLOR_STOPS, GLYPHS, SPIRAL } from "../lib/config";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "../lib/useReducedMotion";
 
 function interpolateColor(t: number): string {
@@ -96,7 +96,13 @@ export default function GlyphOrbs() {
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10">
-      {positions.map(({ char, label, x, y, color }, idx) => (
+      {positions.map(({ char, label, x, y, color }, idx) => {
+        const style: CSSProperties & { [key: string]: string | number | undefined } = {
+          left: Math.round(x - 24),
+          top: Math.round(y - 24),
+          "--halo": color,
+        };
+        return (
         <button
           key={idx}
           aria-label={label}
@@ -104,11 +110,12 @@ export default function GlyphOrbs() {
           className={`menu-orb pointer-events-auto absolute select-none rounded-full text-[18px] md:text-[20px] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm border border-white/15 text-white/90 transition-transform hover:scale-[1.03] ${
             prefersReduced ? "" : "animate-[float_4s_ease-in-out_infinite]"
           }`}
-          style={{ left: Math.round(x - 24), top: Math.round(y - 24), ['--halo' as any]: `${color}` }}
+          style={style}
         >
           <span style={{ color }}>{char}</span>
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 }
