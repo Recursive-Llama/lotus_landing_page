@@ -1,0 +1,8 @@
+:root {
+  --bg: #0a0b10;
+  --text: #e6e9f5;
+  --muted: #aeb3c5;
+  --btn-bg: rgba(255, 255, 255, 0.06);
+  --btn-border: rgba(255, 255, 255, 0.12);
+}
+

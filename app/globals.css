@@ -1,8 +1,9 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
 @theme inline {
@@ -12,15 +13,42 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes rotSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+/* Subtle button glow */
+.btn {
+  --btnGlow: 40, 216, 193; /* teal from spiral */
+  transition: box-shadow 220ms ease, background-color 220ms ease, transform 160ms ease;
+}
+.btn:hover {
+  box-shadow: 0 0 0 1px rgba(var(--btnGlow), 0.35) inset, 0 0 18px rgba(var(--btnGlow), 0.22);
+  background-color: rgba(255,255,255,0.08);
+}
+.btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.2), 0 0 0 1px rgba(var(--btnGlow), 0.55) inset, 0 0 22px rgba(var(--btnGlow), 0.28);
+}
+
+/* Side glyph menu hover glow using per-button CSS variable --halo */
+.menu-orb {
+  transition: box-shadow 200ms ease, background-color 200ms ease, transform 150ms ease;
+  background-color: rgba(255,255,255,0.06);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.14) inset;
+}
+.menu-orb:hover {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.16) inset, 0 0 18px var(--halo), 0 0 2px var(--halo) inset;
+  background-color: rgba(255,255,255,0.08);
 }
