@@ -7,10 +7,19 @@ export default function SpiralBackground() {
   const [size, setSize] = useState<[number, number]>([0, 0]);
 
   useEffect(() => {
-    const handle = () => setSize([window.innerWidth, window.innerHeight]);
-    handle();
-    window.addEventListener("resize", handle);
-    return () => window.removeEventListener("resize", handle);
+    const update = () => {
+      const vv = typeof window !== "undefined" ? (window as any).visualViewport : undefined;
+      const w = Math.round(vv?.width ?? window.innerWidth);
+      const h = Math.round(vv?.height ?? window.innerHeight);
+      setSize([w, h]);
+    };
+    update();
+    window.addEventListener("resize", update);
+    (window as any).visualViewport?.addEventListener?.("resize", update);
+    return () => {
+      window.removeEventListener("resize", update);
+      (window as any).visualViewport?.removeEventListener?.("resize", update);
+    };
   }, []);
 
   const { paths, gradientId } = useMemo(() => {
@@ -51,7 +60,13 @@ export default function SpiralBackground() {
 
   return (
     <div className="absolute inset-0 z-0">
-      <svg className="w-full h-full" viewBox={`0 0 ${size[0]} ${size[1]}`} aria-hidden suppressHydrationWarning>
+      <svg
+        className="w-full h-full"
+        viewBox={`0 0 ${size[0]} ${size[1]}`}
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden
+        suppressHydrationWarning
+      >
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
             {COLOR_STOPS.map((s, i) => (
@@ -61,12 +76,23 @@ export default function SpiralBackground() {
           <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
           </filter>
+          <filter id="softGlowMobile" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur" />
+          </filter>
         </defs>
+        <style>
+          {`
+            .spiral-glow { filter: url(#softGlow); }
+            @media (max-width: 640px) {
+              .spiral-glow { filter: url(#softGlowMobile); }
+            }
+          `}
+        </style>
         <rect width="100%" height="100%" fill="#0a0b10" />
-        <g style={{ transformOrigin: "50% 50%", animation: "rotSlow 60s linear infinite" }}>
+        <g style={{ transformOrigin: "50% 50%", transformBox: "fill-box", animation: "rotSlow 60s linear infinite" }}>
         {paths.map((p, i) => (
           <g key={i} opacity={0.48 - i * 0.10}>
-            <path d={p} stroke={`url(#${gradientId})`} strokeOpacity="0.14" strokeWidth={16 - i * 2.5} strokeLinecap="round" filter="url(#softGlow)" fill="none" />
+            <path d={p} className="spiral-glow" stroke={`url(#${gradientId})`} strokeOpacity="0.14" strokeWidth={16 - i * 2.5} strokeLinecap="round" fill="none" />
             <path d={p} stroke={`url(#${gradientId})`} strokeWidth={2.2 - i * 0.15} strokeLinecap="round" fill="none" />
           </g>
         ))}
