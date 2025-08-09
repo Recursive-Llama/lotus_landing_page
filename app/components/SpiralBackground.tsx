@@ -14,6 +14,7 @@ import { COLOR_STOPS, SPIRAL } from "../lib/config";
 
 export default function SpiralBackground() {
   const [size, setSize] = useState<[number, number]>([0, 0]);
+  const [debug, setDebug] = useState(false);
 
   useEffect(() => {
     const update = () => {
@@ -24,6 +25,10 @@ export default function SpiralBackground() {
       setSize([w, h]);
     };
     update();
+    try {
+      const q = new URLSearchParams(window.location.search);
+      setDebug(q.get("debugSpiral") === "1");
+    } catch {}
     window.addEventListener("resize", update);
     const wwin = window as WindowWithVV;
     wwin.visualViewport?.addEventListener?.("resize", update);
@@ -33,10 +38,10 @@ export default function SpiralBackground() {
     };
   }, []);
 
-  const { paths, gradientId } = useMemo(() => {
+  const { paths, gradientId, stats } = useMemo(() => {
     const [width, height] = size;
     if (width === 0 || height === 0) {
-      return { paths: [], gradientId: "grad" };
+      return { paths: [], gradientId: "grad", stats: { width, height, pixelScale: 0, totalTheta: 0 } };
     }
     const cx = width / 2;
     const cy = height / 2;
@@ -61,7 +66,7 @@ export default function SpiralBackground() {
 
     // Build 4 concentric fades like the reference
     const paths = [0, 1, 2, 3].map((i) => makePath(i));
-    return { paths, gradientId: "grad" };
+    return { paths, gradientId: "grad", stats: { width, height, pixelScale, totalTheta } };
   }, [size]);
 
   // Avoid SSR/client mismatch: render nothing until we have real size
@@ -109,6 +114,13 @@ export default function SpiralBackground() {
         ))}
         </g>
       </svg>
+      {debug && (
+        <div className="absolute left-2 top-2 text-[11px] text-white/80 bg-black/40 rounded px-2 py-1 z-20">
+          <div>size: {size[0]}×{size[1]}</div>
+          <div>paths: {paths.length}</div>
+          <div>pxScale: {stats.pixelScale.toFixed(2)}</div>
+        </div>
+      )}
     </div>
   );
 }
