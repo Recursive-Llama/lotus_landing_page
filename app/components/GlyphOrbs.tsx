@@ -53,15 +53,7 @@ export default function GlyphOrbs() {
     const topOffset = Math.max(120, Math.round(height * 0.22));
     const spacing = 60; // vertical gap
     // Assign menu colors following the spiral gradient order
-    const menuColors = [
-      COLOR_STOPS[0].color, // teal
-      COLOR_STOPS[1].color, // violet
-      COLOR_STOPS[2].color, // magenta
-      COLOR_STOPS[3].color, // pink/orange
-      COLOR_STOPS[4].color, // orange
-      "#7fd1ff", // extra fallback tone
-      "#b2ffea", // extra fallback tone
-    ];
+    const menuColors = COLOR_STOPS.map((c) => c.color);
     return GLYPHS.map((g, idx) => ({
       ...g,
       x: Math.max(60, width - menuRight),
