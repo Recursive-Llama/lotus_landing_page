@@ -51,7 +51,7 @@ export default function SpiralBackground() {
     const pixelScale = (Math.min(width, height) * fit) / baseRadius;
     const isMobile = width <= 640;
     const makePath = (offset: number) => {
-      const step = isMobile ? 0.02 : 0.010;
+      const step = isMobile ? 0.014 : 0.010;
       const pts: string[] = [];
       // start where radius is sub-pixel so the spiral visually disappears into the center
       const targetPx = 0.4; // sub-pixel radius
@@ -65,8 +65,8 @@ export default function SpiralBackground() {
       return `M ${pts.join(" L ")}`;
     };
 
-    // Build multiple concentric fades; fewer on mobile for performance
-    const count = isMobile ? 2 : 4;
+    // Build multiple concentric fades; keep 3 on mobile for quality
+    const count = isMobile ? 3 : 4;
     const paths = Array.from({ length: count }, (_, i) => makePath(i));
     return { paths, gradientId: "grad", stats: { width, height, pixelScale, totalTheta } };
   }, [size]);
