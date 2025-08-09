@@ -49,8 +49,9 @@ export default function SpiralBackground() {
     const baseRadius = SPIRAL.a * Math.exp(SPIRAL.b * totalTheta);
     const fit = 0.62; // extend outer coils further toward edges
     const pixelScale = (Math.min(width, height) * fit) / baseRadius;
+    const isMobile = width <= 640;
     const makePath = (offset: number) => {
-      const step = 0.010;
+      const step = isMobile ? 0.02 : 0.010;
       const pts: string[] = [];
       // start where radius is sub-pixel so the spiral visually disappears into the center
       const targetPx = 0.4; // sub-pixel radius
@@ -64,8 +65,9 @@ export default function SpiralBackground() {
       return `M ${pts.join(" L ")}`;
     };
 
-    // Build 4 concentric fades like the reference
-    const paths = [0, 1, 2, 3].map((i) => makePath(i));
+    // Build multiple concentric fades; fewer on mobile for performance
+    const count = isMobile ? 2 : 4;
+    const paths = Array.from({ length: count }, (_, i) => makePath(i));
     return { paths, gradientId: "grad", stats: { width, height, pixelScale, totalTheta } };
   }, [size]);
 
@@ -100,7 +102,7 @@ export default function SpiralBackground() {
           {`
             .spiral-glow { filter: url(#softGlow); }
             @media (max-width: 640px) {
-              .spiral-glow { filter: url(#softGlowMobile); }
+              .spiral-glow { filter: none; }
             }
           `}
         </style>
@@ -108,7 +110,9 @@ export default function SpiralBackground() {
         <g style={{ transformOrigin: "50% 50%", transformBox: "view-box", animation: size[0] > 640 ? "rotSlow 60s linear infinite" : "none" }}>
         {paths.map((p, i) => (
           <g key={i} opacity={0.48 - i * 0.10}>
+            {/* Mobile: no filter; simulate glow with layered strokes */}
             <path d={p} className="spiral-glow" stroke={`url(#${gradientId})`} strokeOpacity="0.14" strokeWidth={16 - i * 2.5} strokeLinecap="round" fill="none" />
+            <path d={p} stroke={`url(#${gradientId})`} strokeOpacity={0.10} strokeWidth={12 - i * 2} strokeLinecap="round" fill="none" />
             <path d={p} stroke={`url(#${gradientId})`} strokeWidth={2.2 - i * 0.15} strokeLinecap="round" fill="none" />
           </g>
         ))}
