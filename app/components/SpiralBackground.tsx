@@ -8,17 +8,25 @@ export default function SpiralBackground() {
 
   useEffect(() => {
     const update = () => {
-      const vv = typeof window !== "undefined" ? (window as any).visualViewport : undefined;
+      const wwin = typeof window !== "undefined" ? window : undefined;
+      const vv: { width: number; height: number } | undefined = (wwin && ("visualViewport" in wwin))
+        ? (wwin as unknown as { visualViewport?: { width: number; height: number } }).visualViewport
+        : undefined;
       const w = Math.round(vv?.width ?? window.innerWidth);
       const h = Math.round(vv?.height ?? window.innerHeight);
       setSize([w, h]);
     };
     update();
     window.addEventListener("resize", update);
-    (window as any).visualViewport?.addEventListener?.("resize", update);
+    // Attach to visualViewport if present
+    if ("visualViewport" in window && (window as unknown as { visualViewport?: any }).visualViewport?.addEventListener) {
+      (window as unknown as { visualViewport?: { addEventListener: (t: string, h: () => void) => void } }).visualViewport!.addEventListener("resize", update);
+    }
     return () => {
       window.removeEventListener("resize", update);
-      (window as any).visualViewport?.removeEventListener?.("resize", update);
+      if ("visualViewport" in window && (window as unknown as { visualViewport?: any }).visualViewport?.removeEventListener) {
+        (window as unknown as { visualViewport?: { removeEventListener: (t: string, h: () => void) => void } }).visualViewport!.removeEventListener("resize", update);
+      }
     };
   }, []);
 
