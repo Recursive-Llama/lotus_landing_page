@@ -53,12 +53,13 @@ export default function GlyphOrbs() {
     const topOffset = Math.max(120, Math.round(height * 0.22));
     const spacing = 60; // vertical gap
     // Assign menu colors following the spiral gradient order
+    // Shift colors down by one so first item uses second color, and last uses first
     const menuColors = COLOR_STOPS.map((c) => c.color);
     return GLYPHS.map((g, idx) => ({
       ...g,
       x: Math.max(60, width - menuRight),
       y: topOffset + idx * spacing,
-      color: menuColors[idx % menuColors.length],
+      color: menuColors[(idx + 1) % menuColors.length],
     }));
   }, [size]);
 
