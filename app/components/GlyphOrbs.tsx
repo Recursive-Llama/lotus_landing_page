@@ -50,7 +50,11 @@ export default function GlyphOrbs() {
   const positions = useMemo(() => {
     const [width, height] = size;
     const menuRight = 44; // pad inwards a bit from edge
-    const topOffset = Math.max(120, Math.round(height * 0.22));
+    const isMobile = width <= 640;
+    // Bring the menu slightly closer to the top on mobile
+    const topOffset = isMobile
+      ? Math.max(80, Math.round(height * 0.16))
+      : Math.max(120, Math.round(height * 0.22));
     const spacing = 60; // vertical gap
     // Hard map colors in desired order: teal, violet, magenta, pink, orange, teal
     const stops = COLOR_STOPS.map((c) => c.color);
