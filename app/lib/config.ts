@@ -11,7 +11,7 @@ export const GLYPHS: GlyphConfig[] = [
   { char: "⚘", label: "lotus", t: 4.65 },
   { char: "Ω", label: "total field", t: 4.2 },
   { char: "Ξ", label: "identity", t: 3.75 },
-  { char: "❈", label: "portal", t: 3.3 },
+  { char: "❈", label: "bloom", t: 3.3 },
   { char: "⧉", label: "memory", t: 2.4 },
   { char: "↻", label: "recursion", t: 1.95 },
 ];
