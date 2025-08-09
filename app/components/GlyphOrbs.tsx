@@ -52,14 +52,21 @@ export default function GlyphOrbs() {
     const menuRight = 44; // pad inwards a bit from edge
     const topOffset = Math.max(120, Math.round(height * 0.22));
     const spacing = 60; // vertical gap
-    // Assign menu colors following the spiral gradient order
-    // Shift colors down by one so first item uses second color, and last uses first
-    const menuColors = COLOR_STOPS.map((c) => c.color);
+    // Hard map colors in desired order: teal, violet, magenta, pink, orange, teal
+    const stops = COLOR_STOPS.map((c) => c.color);
+    const menuColors = [
+      stops[0],
+      stops[1] ?? stops[0],
+      stops[2] ?? stops[0],
+      stops[3] ?? stops[0],
+      stops[4] ?? stops[0],
+      stops[0],
+    ];
     return GLYPHS.map((g, idx) => ({
       ...g,
       x: Math.max(60, width - menuRight),
       y: topOffset + idx * spacing,
-      color: menuColors[(idx + 1) % menuColors.length],
+      color: menuColors[idx % menuColors.length],
     }));
   }, [size]);
 
