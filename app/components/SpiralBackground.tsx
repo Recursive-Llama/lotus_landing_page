@@ -105,7 +105,7 @@ export default function SpiralBackground() {
           `}
         </style>
         <rect width="100%" height="100%" fill="#0a0b10" />
-        <g style={{ transformOrigin: "50% 50%", transformBox: "fill-box", animation: "rotSlow 60s linear infinite" }}>
+        <g style={{ transformOrigin: "50% 50%", transformBox: "fill-box", animation: size[0] > 640 ? "rotSlow 60s linear infinite" : "none" }}>
         {paths.map((p, i) => (
           <g key={i} opacity={0.48 - i * 0.10}>
             <path d={p} className="spiral-glow" stroke={`url(#${gradientId})`} strokeOpacity="0.14" strokeWidth={16 - i * 2.5} strokeLinecap="round" fill="none" />
