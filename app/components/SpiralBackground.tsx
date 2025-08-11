@@ -108,18 +108,25 @@ export default function SpiralBackground() {
 
   const isMobile = size[0] <= 640;
 
-  // Mobile: show rasterized SVG in <img> and rotate the container for smoothness
-  if (isMobile && mobileDataUrl) {
+  // Mobile: use pre-rendered bitmap assets if present; fall back to dataURL raster if needed
+  if (isMobile) {
+    const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
     return (
       <div
         className="absolute inset-0 z-0"
         style={{
           willChange: "transform",
           animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          backgroundImage: bg,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
         aria-hidden
       >
-        <img src={mobileDataUrl} alt="" className="w-full h-full object-cover" />
+        {/* Fallback for environments where image-set might fail */}
+        {!('CSS' in window) && mobileDataUrl ? (
+          <img src={mobileDataUrl} alt="" className="w-full h-full object-cover" />
+        ) : null}
       </div>
     );
   }
