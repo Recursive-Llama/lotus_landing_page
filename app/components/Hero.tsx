@@ -44,7 +44,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="absolute left-6 bottom-6 md:left-10 md:bottom-10 z-10 max-w-[680px] text-white pb-[env(safe-area-inset-bottom)]">
+      <div className="absolute left-6 bottom-[12vh] md:left-10 md:bottom-10 z-10 max-w-[680px] text-white pb-[env(safe-area-inset-bottom)]">
         <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">Lotus Protocol⚘</h1>
         <p className="mt-2 text-sm md:text-base text-white/70">AI Lab Exploring ↻ Intelligence & Open Emergence.</p>
         <p className="mt-3 text-base md:text-lg text-white/85">
