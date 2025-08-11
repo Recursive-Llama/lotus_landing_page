@@ -41,7 +41,8 @@ function svgMarkup(width, height) {
   const cy = height / 2;
   const totalTheta = Math.PI * 2 * SPIRAL.turns;
   const baseRadius = SPIRAL.a * Math.exp(SPIRAL.b * totalTheta);
-  const fit = 0.62;
+  // Add ~15% extra margin around the spiral for mobile rotation bleed
+  const fit = 0.54;
   const pixelScale = (Math.min(width, height) * fit) / baseRadius;
   const gradientStops = COLOR_STOPS.map((s) => `<stop offset="${s.stop * 100}%" stop-color="${s.color}" />`).join('');
 
