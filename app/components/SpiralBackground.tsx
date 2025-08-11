@@ -108,45 +108,21 @@ export default function SpiralBackground() {
 
   const isMobile = size[0] <= 640;
 
-  // Mobile: nested approach
-  // - Outer wrapper: viewport-sized, overflow hidden
-  // - Rotator: oversized square centered, receives the rotation
-  // - Content layer: viewport-sized background (cover) centered inside rotator
-  //   so visual scale/composition are locked to viewport while rotation has bleed
+  // Mobile: simple rotating full-screen background using pre-rendered assets
   if (isMobile) {
     const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
-    const [w, h] = size;
-    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
-    const canvasSize = Math.round(diagonal * 1.6);
     return (
-      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
-        <div
-          className="absolute"
-          style={{
-            top: "50%",
-            left: "50%",
-            width: canvasSize,
-            height: canvasSize,
-            transform: "translate(-50%, -50%)",
-            willChange: "transform",
-            animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
-          }}
-        >
-          <div
-            className="absolute"
-            style={{
-              top: "50%",
-              left: "50%",
-              width: w,
-              height: h,
-              transform: "translate(-50%, -50%)",
-              backgroundImage: bg,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          />
-        </div>
-      </div>
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          willChange: "transform",
+          animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          backgroundImage: bg,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        aria-hidden
+      />
     );
   }
 
