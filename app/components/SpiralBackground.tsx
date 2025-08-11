@@ -110,7 +110,8 @@ export default function SpiralBackground() {
 
   // Mobile: simple rotating full-screen background using pre-rendered assets
   if (isMobile) {
-    const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
+    const v = Date.now().toString().slice(-6); // simple cache buster
+    const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp?v=${v}) 2x, url(/spiral-mobile-1600.webp?v=${v}) 1.5x, url(/spiral-mobile-1200.webp?v=${v}) 1x)`;
     return (
       <div
         className="absolute inset-0 z-0"
