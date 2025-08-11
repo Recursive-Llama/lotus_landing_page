@@ -113,7 +113,7 @@ export default function SpiralBackground() {
     const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
     const [w, h] = size;
     const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
-    const canvasSize = Math.round(diagonal * 1.2); // 20% bleed beyond diagonal
+    const canvasSize = Math.round(diagonal * 1.8); // more bleed to avoid any clipping during rotation
     return (
       <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
         <div
