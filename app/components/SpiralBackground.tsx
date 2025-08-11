@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useReducedMotion } from "../lib/useReducedMotion";
 
 type VisualViewportLike = {
   width: number;
@@ -73,6 +74,8 @@ export default function SpiralBackground() {
     return { paths, gradientId: "grad", stats: { width, height, pixelScale, totalTheta } };
   }, [size]);
 
+  const prefersReducedMotion = useReducedMotion();
+
   // Avoid SSR/client mismatch: render nothing until we have real size
   if (size[0] === 0 || size[1] === 0) {
     return <div className="absolute inset-0 -z-10" aria-hidden />;
@@ -109,7 +112,16 @@ export default function SpiralBackground() {
           `}
         </style>
         <rect width="100%" height="100%" fill="#0a0b10" />
-        <g style={{ transformOrigin: "50% 50%", transformBox: "view-box", animation: size[0] > 640 ? "rotSlow 60s linear infinite" : "none" }}>
+        <g
+          style={{
+            transformOrigin: "50% 50%",
+            transformBox: "view-box",
+            willChange: "transform",
+            animation: prefersReducedMotion
+              ? "none"
+              : `rotSlow ${size[0] > 640 ? "60s" : "90s"} linear infinite`,
+          }}
+        >
         {paths.map((p, i) => (
           <g key={i} opacity={0.48 - i * 0.10}>
             {/* Mobile: no filter; simulate glow with layered strokes */}
