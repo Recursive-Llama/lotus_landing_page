@@ -41,8 +41,8 @@ function svgMarkup(width, height) {
   const cy = height / 2;
   const totalTheta = Math.PI * 2 * SPIRAL.turns;
   const baseRadius = SPIRAL.a * Math.exp(SPIRAL.b * totalTheta);
-  // Increase bleed: ~25% more margin than original (0.62 * 0.75 ≈ 0.46)
-  const fit = 0.46;
+  // Increase bleed for full 360° rotation: ~1/√2 of original (0.62 / 1.41 ≈ 0.44)
+  const fit = 0.44;
   const pixelScale = (Math.min(width, height) * fit) / baseRadius;
   const gradientStops = COLOR_STOPS.map((s) => `<stop offset="${s.stop * 100}%" stop-color="${s.color}" />`).join('');
 
