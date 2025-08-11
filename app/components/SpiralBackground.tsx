@@ -108,34 +108,21 @@ export default function SpiralBackground() {
 
   const isMobile = size[0] <= 640;
 
-  // Mobile: use oversized rotating canvas so edges never get clipped during rotation
+  // Mobile: simple rotating full-screen background using pre-rendered assets
   if (isMobile) {
     const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
-    const [w, h] = size;
-    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
-    const canvasSize = Math.round(diagonal * 1.8); // more bleed to avoid any clipping during rotation
     return (
-      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
-        <div
-          className="absolute"
-          style={{
-            top: "50%",
-            left: "50%",
-            width: canvasSize,
-            height: canvasSize,
-            transform: "translate(-50%, -50%)",
-            backgroundImage: bg,
-            // Match the background rendering size to the viewport so the spiral
-            // appears the same scale as full-screen while the oversized canvas
-            // provides bleed during rotation.
-            backgroundSize: `${w}px ${h}px`,
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            willChange: "transform",
-            animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
-          }}
-        />
-      </div>
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          willChange: "transform",
+          animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          backgroundImage: bg,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        aria-hidden
+      />
     );
   }
 
