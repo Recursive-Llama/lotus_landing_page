@@ -45,11 +45,12 @@ export default function SpiralBackground() {
     }
     const cx = width / 2;
     const cy = height / 2;
+    // Reduce global top gap on mobile by shifting viewBox baseline slightly upward (visual adjustment)
+    const isMobile = width <= 640;
     const totalTheta = Math.PI * 2 * SPIRAL.turns;
     const baseRadius = SPIRAL.a * Math.exp(SPIRAL.b * totalTheta);
     const fit = 0.62; // extend outer coils further toward edges
     const pixelScale = (Math.min(width, height) * fit) / baseRadius;
-    const isMobile = width <= 640;
     const makePath = (offset: number) => {
       const step = isMobile ? 0.014 : 0.010;
       const pts: string[] = [];
@@ -80,7 +81,7 @@ export default function SpiralBackground() {
     <div className="absolute inset-0 z-0">
       <svg
         className="w-full h-full"
-        viewBox={`0 0 ${size[0]} ${size[1]}`}
+        viewBox={`0 ${size[0] <= 640 ? -Math.round(size[1] * 0.04) : 0} ${size[0]} ${size[1]}`}
         preserveAspectRatio="xMidYMid slice"
         aria-hidden
         suppressHydrationWarning
