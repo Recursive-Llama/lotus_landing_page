@@ -125,8 +125,12 @@ export default function SpiralBackground() {
             height: canvasSize,
             transform: "translate(-50%, -50%)",
             backgroundImage: bg,
-            backgroundSize: "cover",
+            // Match the background rendering size to the viewport so the spiral
+            // appears the same scale as full-screen while the oversized canvas
+            // provides bleed during rotation.
+            backgroundSize: `${w}px ${h}px`,
             backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
             willChange: "transform",
             animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
           }}
