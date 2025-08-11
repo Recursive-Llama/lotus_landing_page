@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useReducedMotion } from "../lib/useReducedMotion";
 
 type VisualViewportLike = {
@@ -17,6 +17,8 @@ export default function SpiralBackground() {
   const [size, setSize] = useState<[number, number]>([0, 0]);
   const [debug, setDebug] = useState(false);
   const [expRotator, setExpRotator] = useState(false);
+  const [useCanvas, setUseCanvas] = useState(false);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const update = () => {
@@ -31,6 +33,7 @@ export default function SpiralBackground() {
       const q = new URLSearchParams(window.location.search);
       setDebug(q.get("debugSpiral") === "1");
       setExpRotator(q.get("expRotator") === "1");
+      setUseCanvas(q.get("canvas") === "1");
     } catch {}
     window.addEventListener("resize", update);
     const wwin = window as WindowWithVV;
@@ -103,12 +106,70 @@ export default function SpiralBackground() {
 
   const prefersReducedMotion = useReducedMotion();
 
+  // Canvas draw for mobile path. Draw once per size change; rotate the canvas element via CSS.
+  useEffect(() => {
+    if (!useCanvas) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const [w, h] = size;
+    if (w === 0 || h === 0) return;
+    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    // Oversized square to allow bleed; we still draw the image at viewport size centered
+    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
+    const canvasSize = Math.round(diagonal * 1.6);
+    canvas.width = Math.floor(canvasSize * dpr);
+    canvas.height = Math.floor(canvasSize * dpr);
+    canvas.style.width = `${canvasSize}px`;
+    canvas.style.height = `${canvasSize}px`;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.resetTransform();
+    ctx.scale(dpr, dpr);
+    // Fill bg
+    ctx.fillStyle = "#0a0b10";
+    ctx.fillRect(0, 0, canvasSize, canvasSize);
+    // Load best image and draw centered at viewport scale
+    const v = Date.now().toString().slice(-6);
+    const src2000 = `/spiral-mobile-2000.webp?v=${v}`;
+    const img = new Image();
+    img.onload = () => {
+      const dx = Math.floor((canvasSize - w) / 2);
+      const dy = Math.floor((canvasSize - h) / 2);
+      ctx.drawImage(img, dx, dy, w, h);
+    };
+    img.src = src2000;
+  }, [size, useCanvas]);
+
   // Avoid SSR/client mismatch: render nothing until we have real size
   if (size[0] === 0 || size[1] === 0) {
     return <div className="absolute inset-0 -z-10" aria-hidden />;
   }
 
   const isMobile = size[0] <= 640;
+
+  // Mobile canvas path: guaranteed no clipping. Enabled via ?canvas=1
+  if (isMobile && useCanvas) {
+    const [w, h] = size;
+    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
+    const canvasSize = Math.round(diagonal * 1.6);
+    return (
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <canvas
+          ref={canvasRef}
+          className="absolute"
+          style={{
+            top: "50%",
+            left: "50%",
+            width: canvasSize,
+            height: canvasSize,
+            transform: "translate(-50%, -50%)",
+            willChange: "transform",
+            animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          }}
+        />
+      </div>
+    );
+  }
 
   // Mobile experimental path: oversized rotator with viewport-sized img layer, enabled via ?expRotator=1
   if (isMobile && expRotator) {
