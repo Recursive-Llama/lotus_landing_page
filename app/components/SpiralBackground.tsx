@@ -108,21 +108,31 @@ export default function SpiralBackground() {
 
   const isMobile = size[0] <= 640;
 
-  // Mobile: simple rotating full-screen background using pre-rendered assets
+  // Mobile: add bleed by scaling outer layer and inversely shrinking background-size
   if (isMobile) {
     const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
+    const scale = 1.12;
     return (
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          willChange: "transform",
-          animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
-          backgroundImage: bg,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        aria-hidden
-      />
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <div
+          className="absolute inset-0"
+          style={{
+            transform: `scale(${scale})`,
+            transformOrigin: "50% 50%",
+            willChange: "transform",
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+              backgroundImage: bg,
+              backgroundSize: `calc(100% / ${scale}) calc(100% / ${scale})`,
+              backgroundPosition: "center",
+            }}
+          />
+        </div>
+      </div>
     );
   }
 
