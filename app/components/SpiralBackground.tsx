@@ -123,7 +123,15 @@ export default function SpiralBackground() {
     canvas.style.height = `${canvasSize}px`;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.resetTransform();
+    // resetTransform is not in older TS DOM types; guard at runtime
+    // Minimal structural type to satisfy linter without widening to any
+    type CtxLike = { resetTransform?: () => void; imageSmoothingQuality?: unknown };
+    const anyCtx = ctx as unknown as CtxLike;
+    if (anyCtx.resetTransform) {
+      anyCtx.resetTransform();
+    } else {
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
     ctx.scale(dpr, dpr);
     // Fill bg
     ctx.fillStyle = "#0a0b10";
@@ -132,9 +140,12 @@ export default function SpiralBackground() {
     const v = Date.now().toString().slice(-6);
     const src2000 = `/spiral-mobile-2000.webp?v=${v}`;
     const img = new Image();
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       const dx = Math.floor((canvasSize - w) / 2);
       const dy = Math.floor((canvasSize - h) / 2);
+      ctx.imageSmoothingEnabled = true;
+      anyCtx.imageSmoothingQuality = "high";
       ctx.drawImage(img, dx, dy, w, h);
     };
     img.src = src2000;
