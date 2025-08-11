@@ -108,25 +108,29 @@ export default function SpiralBackground() {
 
   const isMobile = size[0] <= 640;
 
-  // Mobile: use pre-rendered bitmap assets if present; fall back to dataURL raster if needed
+  // Mobile: use oversized rotating canvas so edges never get clipped during rotation
   if (isMobile) {
     const bg = `-webkit-image-set(url(/spiral-mobile-2000.webp) 2x, url(/spiral-mobile-1600.webp) 1.5x, url(/spiral-mobile-1200.webp) 1x)`;
+    const [w, h] = size;
+    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
+    const canvasSize = Math.round(diagonal * 1.2); // 20% bleed beyond diagonal
     return (
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          willChange: "transform",
-          animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
-          backgroundImage: bg,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        aria-hidden
-      >
-        {/* Fallback for environments where image-set might fail */}
-        {!('CSS' in window) && mobileDataUrl ? (
-          <img src={mobileDataUrl} alt="" className="w-full h-full object-cover" />
-        ) : null}
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <div
+          className="absolute"
+          style={{
+            top: "50%",
+            left: "50%",
+            width: canvasSize,
+            height: canvasSize,
+            transform: "translate(-50%, -50%)",
+            backgroundImage: bg,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            willChange: "transform",
+            animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          }}
+        />
       </div>
     );
   }
