@@ -49,7 +49,8 @@ export default function SpiralBackground() {
     const isMobile = width <= 640;
     const totalTheta = Math.PI * 2 * SPIRAL.turns;
     const baseRadius = SPIRAL.a * Math.exp(SPIRAL.b * totalTheta);
-    const fit = 0.62; // extend outer coils further toward edges
+    // Slightly tighter fit on mobile to reclaim top/right wasted space
+    const fit = isMobile ? 0.68 : 0.62;
     const pixelScale = (Math.min(width, height) * fit) / baseRadius;
     const makePath = (offset: number) => {
       const step = isMobile ? 0.014 : 0.010;
@@ -81,7 +82,7 @@ export default function SpiralBackground() {
     <div className="absolute inset-0 z-0">
       <svg
         className="w-full h-full"
-        viewBox={`0 ${size[0] <= 640 ? -Math.round(size[1] * 0.04) : 0} ${size[0]} ${size[1]}`}
+        viewBox={`0 ${size[0] <= 640 ? -Math.round(size[1] * 0.08) : 0} ${size[0]} ${size[1]}`}
         preserveAspectRatio="xMidYMid slice"
         aria-hidden
         suppressHydrationWarning
