@@ -16,6 +16,7 @@ import { COLOR_STOPS, SPIRAL } from "../lib/config";
 export default function SpiralBackground() {
   const [size, setSize] = useState<[number, number]>([0, 0]);
   const [debug, setDebug] = useState(false);
+  const [expRotator, setExpRotator] = useState(false);
 
   useEffect(() => {
     const update = () => {
@@ -29,6 +30,7 @@ export default function SpiralBackground() {
     try {
       const q = new URLSearchParams(window.location.search);
       setDebug(q.get("debugSpiral") === "1");
+      setExpRotator(q.get("expRotator") === "1");
     } catch {}
     window.addEventListener("resize", update);
     const wwin = window as WindowWithVV;
@@ -107,6 +109,49 @@ export default function SpiralBackground() {
   }
 
   const isMobile = size[0] <= 640;
+
+  // Mobile experimental path: oversized rotator with viewport-sized img layer, enabled via ?expRotator=1
+  if (isMobile && expRotator) {
+    const v = Date.now().toString().slice(-6);
+    const src1200 = `/spiral-mobile-1200.webp?v=${v}`;
+    const src1600 = `/spiral-mobile-1600.webp?v=${v}`;
+    const src2000 = `/spiral-mobile-2000.webp?v=${v}`;
+    const [w, h] = size;
+    const diagonal = Math.ceil(Math.sqrt(w * w + h * h));
+    const canvasSize = Math.round(diagonal * 1.6);
+    return (
+      <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <div
+          className="absolute"
+          style={{
+            top: "50%",
+            left: "50%",
+            width: canvasSize,
+            height: canvasSize,
+            transform: "translate(-50%, -50%)",
+            willChange: "transform",
+            animation: prefersReducedMotion ? "none" : "rotSlow 90s linear infinite",
+          }}
+        >
+          <img
+            alt=""
+            src={src1600}
+            srcSet={`${src1200} 1200w, ${src1600} 1600w, ${src2000} 2000w`}
+            sizes="100vw"
+            className="absolute"
+            style={{
+              top: "50%",
+              left: "50%",
+              width: "100svw",
+              height: "100svh",
+              transform: "translate(-50%, -50%)",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   // Mobile: simple rotating full-screen background using pre-rendered assets
   if (isMobile) {
