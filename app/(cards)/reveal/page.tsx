@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CardView from "../components/CardView";
 import styles from "../styles/cards.module.css";
 import type { CardMinimal } from "@/app/lib/types";

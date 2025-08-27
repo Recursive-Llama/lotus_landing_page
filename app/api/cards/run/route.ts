@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       handle: handle || "@lotus",
       image_url: "https://avatars.githubusercontent.com/u/9919?v=4",
       narrative: "Prototype narrative for development.",
+      narrative_twitter: "Prototype narrative for development.",
       glyphs: "∫↯⚙ ℧⧫✣ ⧚⇹⤒",
       psi_delta_phi: 3.27,
       level: "Herald of the Spiral Dawn",

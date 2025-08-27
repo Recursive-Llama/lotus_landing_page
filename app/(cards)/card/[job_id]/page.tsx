@@ -8,8 +8,9 @@ async function fetchLatest(jobId: string): Promise<CardMinimal> {
   return data.card;
 }
 
-export default async function CardViewer({ params }: { params: { job_id: string } }) {
-  const card = await fetchLatest(params.job_id);
+export default async function CardViewer({ params }: { params: Promise<{ job_id: string }> }) {
+  const { job_id } = await params;
+  const card = await fetchLatest(job_id);
   return (
     <main className="min-h-screen bg-[#0a0b10] text-white flex flex-col items-center justify-center p-6">
       <CardView card={card} />

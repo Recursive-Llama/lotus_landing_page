@@ -3,9 +3,12 @@ import CardView from "../components/CardView";
 export default function TestPage() {
   const testCard = {
     handle: "TestUser",
-    glyphs: ["∫", "℧", "⧚"],
+    image_url: "/kickz.jpg",
+    narrative: "This is a test narrative to see how the text wrapping works in the Lore section. It should wrap properly within the container boundaries and maintain good readability.",
+    narrative_twitter: "This is a test twitter narrative to see how the text wrapping works in the Lore section. It should wrap properly within the container boundaries and maintain good readability.",
+    glyphs: "∫ ℧ ⧚",
     psi_delta_phi: 3.14,
-    level: 42
+    level: "Test Level"
   };
 
   return (
