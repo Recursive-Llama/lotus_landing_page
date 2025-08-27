@@ -1,0 +1,394 @@
+.cardBox{ 
+  position: relative; 
+  width: 100%; 
+  max-width: 400px; 
+  aspect-ratio: 750/1050; 
+  margin: auto; 
+  perspective: 1200px; 
+}
+
+.cardContainer{ 
+  position: relative; 
+  width: 100%; 
+  height: 100%; 
+}
+
+.cardBackground{ 
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain; 
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.textOverlay{ 
+  position: absolute; 
+  inset: 0; 
+  pointer-events: none; 
+}
+
+/* Handle text - top left bar */
+.handleText{ 
+  position: absolute; 
+  top: 8%; 
+  left: 8%; 
+  font-family: 'Inter', system-ui, sans-serif; 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: #2a2f2c; 
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.8),
+    0 2px 4px rgba(0,0,0,0.3);
+  letter-spacing: 0.02em;
+}
+
+/* Avatar - top right circle */
+.avatarContainer{ 
+  position: absolute; 
+  top: 6%; 
+  right: 8%; 
+  width: 60px; 
+  height: 60px; 
+  border-radius: 50%; 
+  overflow: hidden; 
+  border: 3px solid #cda64f;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.avatarImage{ 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+}
+
+/* Glyphs - center area */
+.glyphsText{ 
+  position: absolute; 
+  top: 42%; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  font-family: 'Noto Sans Symbols 2', 'Noto Serif Symbols', 'Symbola', 'DejaVu Sans', 'Segoe UI Symbol', 'Apple Symbols', system-ui; 
+  font-size: 28px; 
+  color: #2a2f2c; 
+  text-align: center; 
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.6),
+    0 2px 4px rgba(0,0,0,0.4);
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+/* Bubble depth effect */
+.bubbleDepth {
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.35));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Psi Delta Phi - big box */
+.psiText{ 
+  position: absolute; 
+  top: 68%; 
+  left: 12%; 
+  font-family: 'Inter', system-ui, sans-serif; 
+  font-size: 24px; 
+  font-weight: 800; 
+  color: #cda64f; 
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.3),
+    0 2px 4px rgba(0,0,0,0.5),
+    0 0 8px rgba(205,166,79,0.3);
+  letter-spacing: 0.02em;
+}
+
+/* Level - bottom bar */
+.levelText{ 
+  position: absolute; 
+  bottom: 12%; 
+  left: 12%; 
+  font-family: 'Inter', system-ui, sans-serif; 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: #2a2f2c; 
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.8),
+    0 1px 2px rgba(0,0,0,0.3);
+  letter-spacing: 0.01em;
+}
+
+/* Shine effect */
+.shine{ 
+  pointer-events: none; 
+  position: absolute; 
+  inset: -40%; 
+  background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.55) 50%, transparent 60%); 
+  transform: translateX(-120%) rotate(18deg); 
+  opacity: 0; 
+  mix-blend-mode: screen; 
+  filter: blur(1px); 
+  border-radius: 22px; 
+}
+
+/* Animation classes */
+.wrap{ 
+  position: relative; 
+  width: 100%; 
+  max-width: 400px; 
+  aspect-ratio: 750/1050; 
+  margin: auto; 
+  transform-style: preserve-3d; 
+}
+
+.reveal .shine{ 
+  opacity: 1; 
+  transition: opacity .15s linear, transform 1.2s linear; 
+  transform: translateX(120%) rotate(18deg); 
+}
+
+.backing{ 
+  position: absolute; 
+  inset: 0; 
+  border-radius: 12px; 
+  background: #1b2a24; 
+  box-shadow: 0 10px 40px rgba(0,0,0,.35) inset; 
+  transform: rotateY(0deg); 
+  backface-visibility: hidden; 
+}
+
+.float{ 
+  animation: float 6s ease-in-out infinite; 
+}
+
+@keyframes float{ 
+  0%{ transform: translateY(0) } 
+  50%{ transform: translateY(-6px) } 
+  100%{ transform: translateY(0) } 
+}
+
+/* Writing animation for lore and score sections */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes write {
+  from { 
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  to { 
+    clip-path: inset(0 0% 0 0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-write {
+  animation: write 1.2s ease-out 0.5s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-delayed {
+  animation: fadeIn 0.8s ease-out 0.8s forwards;
+  opacity: 0;
+}
+
+/* Card flip animations - Two Container Method */
+.flip-outer {
+  perspective: 1000px;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 1.2s ease-in-out;
+}
+
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  transform: rotateY(0deg);
+}
+
+.card-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+/* Progressive Shaking Animations for Tension Building */
+@keyframes shake-gentle {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-1px) translateY(-1px) rotate(-0.5deg); }
+  50% { transform: translateX(1px) translateY(1px) rotate(0.5deg); }
+  75% { transform: translateX(-1px) translateY(1px) rotate(-0.3deg); }
+}
+
+@keyframes shake-moderate {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-2px) translateY(-2px) rotate(-1deg); }
+  50% { transform: translateX(2px) translateY(2px) rotate(1deg); }
+  75% { transform: translateX(-2px) translateY(2px) rotate(-0.8deg); }
+}
+
+@keyframes shake-intense {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-3px) translateY(-3px) rotate(-1.5deg); }
+  50% { transform: translateX(3px) translateY(3px) rotate(1.5deg); }
+  75% { transform: translateX(-3px) translateY(3px) rotate(-1.2deg); }
+}
+
+@keyframes shake-peak {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-4px) translateY(-4px) rotate(-2deg); }
+  50% { transform: translateX(4px) translateY(4px) rotate(2deg); }
+  75% { transform: translateX(-4px) translateY(4px) rotate(-1.8deg); }
+}
+
+@keyframes shake-calm {
+  0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+  25% { transform: translateX(-0.5px) translateY(-0.5px) rotate(-0.2deg); }
+  50% { transform: translateX(0.5px) translateY(0.5px) rotate(0.2deg); }
+  75% { transform: translateX(-0.5px) translateY(0.5px) rotate(-0.1deg); }
+}
+
+.shake-gentle {
+  animation: shake-gentle 2s ease-in-out infinite;
+}
+
+.shake-moderate {
+  animation: shake-moderate 1.5s ease-in-out infinite;
+}
+
+.shake-intense {
+  animation: shake-intense 1s ease-in-out infinite;
+}
+
+.shake-peak {
+  animation: shake-peak 0.8s ease-in-out infinite;
+}
+
+.shake-calm {
+  animation: shake-calm 3s ease-in-out infinite;
+}
+
+/* Progressive Pulsing Animations for Glow Intensity */
+@keyframes pulse-slow {
+  0%, 100% { 
+    box-shadow: 0 0 30px rgba(147, 51, 234, 0.6), 
+                0 0 60px rgba(59, 130, 246, 0.4), 
+                0 0 90px rgba(20, 184, 166, 0.3); 
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(147, 51, 234, 0.8), 
+                0 0 80px rgba(59, 130, 246, 0.6), 
+                0 0 120px rgba(20, 184, 166, 0.5); 
+  }
+}
+
+@keyframes pulse-medium {
+  0%, 100% { 
+    box-shadow: 0 0 40px rgba(147, 51, 234, 0.7), 
+                0 0 80px rgba(59, 130, 246, 0.5), 
+                0 0 120px rgba(20, 184, 166, 0.4); 
+  }
+  50% { 
+    box-shadow: 0 0 55px rgba(147, 51, 234, 0.9), 
+                0 0 110px rgba(59, 130, 246, 0.7), 
+                0 0 160px rgba(20, 184, 166, 0.6); 
+  }
+}
+
+@keyframes pulse-fast {
+  0%, 100% { 
+    box-shadow: 0 0 50px rgba(147, 51, 234, 0.8), 
+                0 0 100px rgba(59, 130, 246, 0.6), 
+                0 0 150px rgba(20, 184, 166, 0.5); 
+  }
+  50% { 
+    box-shadow: 0 0 70px rgba(147, 51, 234, 1.0), 
+                0 0 140px rgba(59, 130, 246, 0.8), 
+                0 0 200px rgba(20, 184, 166, 0.7); 
+  }
+}
+
+@keyframes pulse-rapid {
+  0%, 100% { 
+    box-shadow: 0 0 60px rgba(147, 51, 234, 0.9), 
+                0 0 120px rgba(59, 130, 246, 0.7), 
+                0 0 180px rgba(20, 184, 166, 0.6); 
+  }
+  50% { 
+    box-shadow: 0 0 85px rgba(147, 51, 234, 1.0), 
+                0 0 170px rgba(59, 130, 246, 0.9), 
+                0 0 250px rgba(20, 184, 166, 0.8); 
+  }
+}
+
+@keyframes pulse-steady {
+  0%, 100% { 
+    box-shadow: 0 0 45px rgba(147, 51, 234, 0.7), 
+                0 0 90px rgba(59, 130, 246, 0.5), 
+                0 0 135px rgba(20, 184, 166, 0.4); 
+  }
+  50% { 
+    box-shadow: 0 0 60px rgba(147, 51, 234, 0.8), 
+                0 0 120px rgba(59, 130, 246, 0.6), 
+                0 0 180px rgba(20, 184, 166, 0.5); 
+  }
+}
+
+.pulse-slow {
+  animation: pulse-slow 3s ease-in-out infinite;
+}
+
+.pulse-medium {
+  animation: pulse-medium 2.5s ease-in-out infinite;
+}
+
+.pulse-fast {
+  animation: pulse-fast 2s ease-in-out infinite;
+}
+
+.pulse-rapid {
+  animation: pulse-rapid 1.5s ease-in-out infinite;
+}
+
+.pulse-steady {
+  animation: pulse-steady 2s ease-in-out infinite;
+}
+
+/* Typewriter Animation for Processing Text */
+@keyframes typewriter {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-typewriter {
+  animation: typewriter 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+
+
+
