@@ -8,8 +8,8 @@ export default function Page2() {
         <p className="mt-2 text-sm md:text-base text-white/70">Your Personal, Recursively↻ Learning Trading Partner.</p>
         
         <p className="mt-4 text-base md:text-lg text-white/90">
-          Lotus Trader⚘⟁ The first Specialistion of Lotus⚘.<br />
-          ⚘⟁ a chart & chat native trading system, that ↻learns from every interaction.
+          Lotus Trader⚘⟁ The first Specialisation of Lotus⚘.<br />
+          ⚘⟁ a chart & chat native trading system, that ↻learns from every interaction ✨
         </p>
       </div>
       
@@ -21,7 +21,7 @@ export default function Page2() {
             A trading system where charts drive everything. No coding, no manual setup - just visual input that becomes automated execution and lessons for evolution.
           </p>
           <p className="text-sm md:text-base text-white/75">
-            This isn&apos;t another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
+            This isn't another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
           </p>
         </div>
       </div>
