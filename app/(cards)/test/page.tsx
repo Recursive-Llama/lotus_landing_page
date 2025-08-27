@@ -1,4 +1,4 @@
-import CardView2 from "../components/CardView2";
+import CardView from "../components/CardView";
 
 export default function TestPage() {
   const testCard = {
@@ -11,14 +11,14 @@ export default function TestPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">CardView2 Test - HTML/CSS Version</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-8">CardView Test - HTML/CSS Version</h1>
         <p className="text-gray-600 mb-8">
           This page tests the new HTML/CSS approach for the glyph bubbles, 
           replicating the landing page style exactly.
         </p>
         
         <div className="flex justify-center">
-          <CardView2 card={testCard} />
+          <CardView card={testCard} />
         </div>
         
         <div className="mt-8 p-4 bg-blue-50 rounded-lg">
