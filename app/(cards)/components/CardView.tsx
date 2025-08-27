@@ -27,7 +27,7 @@ export default function CardView({ card, className, glyphStyle = "burnt" }: Prop
   const [wrappedHandleLines, setWrappedHandleLines] = useState<string[]>([]);
   
   // State for Level text positioning
-  const [levelTextAnchor, setLevelTextAnchor] = useState("start");
+  const [levelTextAnchor, setLevelTextAnchor] = useState<"start" | "middle" | "end">("start");
   const [levelTextX, setLevelTextX] = useState(128);
   
   // Calculate optimal font sizes and text wrapping
