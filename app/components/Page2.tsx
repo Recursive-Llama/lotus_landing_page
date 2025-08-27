@@ -9,7 +9,7 @@ export default function Page2() {
         
         <p className="mt-4 text-base md:text-lg text-white/90">
           Lotus Trader⚘⟁ The first Specialisation of Lotus⚘.<br />
-          ⚘⟁ a chart & chat native trading system, that ↻learns from every interaction ✨
+          ⚘⟁ a chart & chat native trading system, that ↻learns from every interaction.
         </p>
       </div>
       
