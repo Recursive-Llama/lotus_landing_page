@@ -21,7 +21,7 @@ export default function Page2() {
             A trading system where charts drive everything. No coding, no manual setup - just visual input that becomes automated execution and lessons for evolution.
           </p>
           <p className="text-sm md:text-base text-white/75">
-            This isn't another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
+            This isn&apos;t another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
           </p>
         </div>
       </div>
