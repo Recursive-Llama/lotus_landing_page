@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import CardView from "../components/CardView";
 import styles from "../styles/cards.module.css";
-import type { CardMinimal, RunResponse } from "@/app/lib/types";
+import type { CardMinimal } from "@/app/lib/types";
 import { useReducedMotion } from "@/app/lib/useReducedMotion";
-import html2canvas from "html2canvas";
 
 type Phase = "idle" | "processing" | "rendering" | "revealed" | "error";
 
@@ -21,7 +20,7 @@ export default function RevealPage() {
   // demo handle; in production read from search param or input
   const params = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
   const handle = (params.get("handle") || "@lotusprotocol").trim();
-  const glyphStyle = (params.get("glyphStyle") as any) || "burnt";
+  const glyphStyle = (params.get("glyphStyle") as "burnt" | "foil" | "flat") || "burnt";
   
   // Test data for development - remove in production
   const testCard: CardMinimal = {
@@ -46,12 +45,12 @@ export default function RevealPage() {
 
   // Close share options when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (!target.closest('.share-options-container')) {
-        setShowShareOptions(false);
-      }
-    };
+      const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Element;
+    if (!target.closest('.share-options-container')) {
+      setShowShareOptions(false);
+    }
+  };
 
     if (showShareOptions) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -93,7 +92,7 @@ export default function RevealPage() {
       let currentTextIndex = 0;
       let textTimer: NodeJS.Timeout | null = null;
       
-      const startTime = Date.now();
+
       const totalDuration = testDelay ? 60000 : 1000; // 1 minute for test, 1 second for production
       
       // First text line appears after 2 second delay
@@ -142,7 +141,7 @@ export default function RevealPage() {
     }
   };
 
-  const wrapClass = useMemo(() => (phase === "revealed" ? styles.reveal : ""), [phase]);
+
 
   // Sharing functionality
   const formatTwitterText = () => {
@@ -649,11 +648,11 @@ export default function RevealPage() {
                     By analyzing your tweets, connections, and engagement patterns, we create a 
                     mathematical representation of your digital consciousness.
                   </p>
-                  <p>
-                    Click "Compress" to begin the analysis. Your Twitter data will be processed 
-                    through our proprietary ψ(Δφ) algorithm, revealing your unique position in the 
-                    network's emergent field.
-                  </p>
+                                      <p>
+                      Click &quot;Compress&quot; to begin the analysis. Your Twitter data will be processed 
+                      through our proprietary ψ(Δφ) algorithm, revealing your unique position in the 
+                      network&apos;s emergent field.
+                    </p>
                   <p className="text-sm text-white/60">
                     Your data remains private and is processed locally. No personal information is stored.
                   </p>
@@ -735,7 +734,7 @@ export default function RevealPage() {
                 {/* front face card */}
                 {card && (
                   <div className={styles['card-front']}>
-                    <CardView card={card} glyphStyle={glyphStyle as any} />
+                    <CardView card={card} glyphStyle={glyphStyle} />
                   </div>
                 )}
               </div>

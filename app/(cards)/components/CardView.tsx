@@ -18,7 +18,7 @@ export default function CardView({ card, className, glyphStyle = "burnt" }: Prop
   // Truncate handle at 63 characters if needed
   const handle = originalHandle.length > 63 ? originalHandle.substring(0, 63) + "..." : originalHandle;
   
-  const avatarUrl = `/api/avatar?handle=${encodeURIComponent(handle)}`;
+
   
   // State for dynamic font sizing and text wrapping
   const [handleFontSize, setHandleFontSize] = useState(50);

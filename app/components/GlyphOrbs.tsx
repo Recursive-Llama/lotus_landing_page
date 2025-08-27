@@ -1,6 +1,5 @@
 "use client";
 
-import { COLOR_STOPS, GLYPHS } from "../lib/config";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useReducedMotion } from "../lib/useReducedMotion";
 
@@ -8,34 +7,7 @@ interface GlyphOrbsProps {
   hideGlyphs?: boolean;
 }
 
-function interpolateColor(t: number): string {
-  const stops = [0.0, 0.3, 0.55, 0.75, 1.0];
-  const cols = COLOR_STOPS.map((s) => s.color);
-  for (let i = 0; i < stops.length - 1; i++) {
-    const a = stops[i];
-    const b = stops[i + 1];
-    if (t >= a && t <= b) {
-      const u = (t - a) / (b - a);
-      const ca = hexToRgb(cols[i]);
-      const cb = hexToRgb(cols[i + 1]);
-      const r = Math.round(ca[0] + (cb[0] - ca[0]) * u);
-      const g = Math.round(ca[1] + (cb[1] - ca[1]) * u);
-      const bch = Math.round(ca[2] + (cb[2] - ca[2]) * u);
-      return `rgb(${r}, ${g}, ${bch})`;
-    }
-  }
-  const c = hexToRgb(cols[cols.length - 1]);
-  return `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
-}
 
-function hexToRgb(hex: string): [number, number, number] {
-  const m = hex.replace("#", "");
-  return [
-    parseInt(m.substring(0, 2), 16),
-    parseInt(m.substring(2, 4), 16),
-    parseInt(m.substring(4, 6), 16),
-  ];
-}
 
 // (Old spiral placement removed; we now render a side menu and color via palette)
 
@@ -57,7 +29,6 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
     
     if (page2 && hero) {
       const page2Rect = page2.getBoundingClientRect();
-      const heroRect = hero.getBoundingClientRect();
       
       // If Page 2 is visible, scroll to Hero (Page 1)
       // If Hero is visible, scroll to Page 2
@@ -75,9 +46,6 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
   const positions = useMemo(() => {
     const [width, height] = size;
     const menuRight = 44; // pad inwards a bit from edge
-    // Restore original top spacing so the side menu position is unchanged
-    const topOffset = Math.max(120, Math.round(height * 0.22));
-    const spacing = 60; // vertical gap
     
     // Check if we're on Page 2 to show different glyphs
     const page2Element = typeof window !== 'undefined' ? document.getElementById('page2') : null;
