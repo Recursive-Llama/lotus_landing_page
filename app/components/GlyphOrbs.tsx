@@ -7,10 +7,6 @@ interface GlyphOrbsProps {
   hideGlyphs?: boolean;
 }
 
-
-
-// (Old spiral placement removed; we now render a side menu and color via palette)
-
 export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
   const [size, setSize] = useState<[number, number]>([0, 0]);
   const prefersReduced = useReducedMotion();
@@ -23,18 +19,24 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
   }, []);
 
   const handleRecursionClick = () => {
-    // Check if we're currently on Page 2
+    // Check which page we're currently on
     const page2 = document.getElementById('page2');
+    const page3 = document.getElementById('page3');
     const hero = document.getElementById('hero');
     
-    if (page2 && hero) {
+    if (page2 && page3 && hero) {
       const page2Rect = page2.getBoundingClientRect();
+      const page3Rect = page3.getBoundingClientRect();
       
-      // If Page 2 is visible, scroll to Hero (Page 1)
+      // If Page 3 is visible, scroll to Hero (Page 1)
+      // If Page 2 is visible, scroll to Page 3
       // If Hero is visible, scroll to Page 2
-      if (page2Rect.top < window.innerHeight / 2) {
-        // We're on Page 2, scroll to Hero
+      if (page3Rect.top < window.innerHeight / 2) {
+        // We're on Page 3, scroll to Hero
         hero.scrollIntoView({ behavior: 'smooth' });
+      } else if (page2Rect.top < window.innerHeight / 2) {
+        // We're on Page 2, scroll to Page 3
+        page3.scrollIntoView({ behavior: 'smooth' });
       } else {
         // We're on Page 1, scroll to Page 2
         page2.scrollIntoView({ behavior: 'smooth' });
@@ -88,12 +90,30 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
               aria-label={label}
               title={label}
               onClick={handleRecursionClick}
-              className={`menu-orb pointer-events-auto absolute select-none rounded-full text-[18px] md:text-[20px] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm border border-white/15 text-white/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer ${
+              className={`menu-orb pointer-events-auto absolute select-none rounded-full text-[18px] md:text-[20px] w-10 h-10 md:w-12 md:h-12 flex items-center justify-center backdrop-blur-sm border text-white/90 transition-all duration-300 hover:scale-[1.05] cursor-pointer z-50 ${
                 prefersReduced ? "" : "animate-[float_4s_ease-in-out_infinite]"
               }`}
-              style={style}
+              style={{
+                left: Math.round(size[0] / 2 - 24), // Center horizontally
+                bottom: 60, // Position from bottom
+                // Invisible clickable area extends beyond the button
+                padding: "12px", // Extends clickable area by 12px in all directions
+                // Consistent blue styling for both pages
+                border: "1px solid rgba(59, 130, 246, 0.4)",
+                boxShadow: "0 0 30px rgba(59, 130, 246, 0.3)",
+              }}
+              onMouseEnter={(e) => {
+                // Enhanced blue hover glow effect
+                e.currentTarget.style.boxShadow = "0 0 60px rgba(59, 130, 246, 0.8)";
+                e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.8)";
+              }}
+              onMouseLeave={(e) => {
+                // Restore original blue glow
+                e.currentTarget.style.boxShadow = "0 0 30px rgba(59, 130, 246, 0.3)";
+                e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.4)";
+              }}
             >
-              <span style={{ color }}>{char}</span>
+              <span style={{ color: "#3b82f6" }}>⚘⟁</span>
             </button>
           );
         }
@@ -112,8 +132,6 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
           </button>
         );
       })}
-      
-
     </div>
   );
 }
