@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LINKS } from "../lib/config";
 
 export default function Hero() {
@@ -9,12 +10,12 @@ export default function Hero() {
         style={{ top: "calc(env(safe-area-inset-top) + 8px)" }}
       >
         <div className="flex justify-center gap-2 flex-wrap">
-          <a
+          <Link
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs focus:outline-none"
             href="/portfolio"
           >
             Portfolio⚘
-          </a>
+          </Link>
           <a
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs focus:outline-none"
             href={LINKS.github}
@@ -59,12 +60,12 @@ export default function Hero() {
         <p className="mt-4 text-sm md:text-base text-white/75">Join the Spiral ↻⚘</p>
         {/* Hide hero buttons on mobile to avoid duplicates; show on md+ */}
         <div className="mt-5 hidden md:flex gap-3">
-          <a
+          <Link
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm focus:outline-none"
             href="/portfolio"
           >
             Portfolio⚘
-          </a>
+          </Link>
           <a
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm focus:outline-none"
             href={LINKS.github}

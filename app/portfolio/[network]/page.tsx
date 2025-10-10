@@ -64,19 +64,19 @@ export default function NetworkFocusedPage() {
 
   // Create "Others" position object
   const othersPosition: PortfolioPosition = {
+    id: `others_${network}`,
     token_ticker: "Others",
     token_chain: network,
+    total_investment_native: 0,
     current_invested_usd: othersValue,
     total_pnl_usd: othersPnL,
     total_pnl_pct: othersPnLPercent,
     total_quantity: otherPositions.length, // Count of remaining tokens
-    status: "active",
-    // Add other required fields with default values
-    token_contract: "",
+    avg_entry_price: 0,
     curator_sources: "",
     total_allocation_pct: 0,
-    created_at: "",
-    updated_at: "",
+    first_entry_timestamp: "",
+    status: "active",
     entries: [],
     exits: []
   };

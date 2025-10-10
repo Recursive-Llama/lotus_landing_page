@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePortfolioData } from "../hooks/usePortfolioData";
 import NetworkBubbleChart from "./NetworkBubbleChart";
@@ -9,7 +9,7 @@ import SpiralBackground from "./SpiralBackground";
 export default function PortfolioSection() {
   const router = useRouter();
   const { portfolioData, loading, error } = usePortfolioData();
-  const [hoveredPosition, setHoveredPosition] = useState<any>(null);
+  // const [hoveredPosition, setHoveredPosition] = useState<{ id: string; token_ticker: string } | null>(null);
 
   if (loading) {
     return (
@@ -118,7 +118,7 @@ export default function PortfolioSection() {
               portfolioValue={portfolioData.summary.portfolioValue || 0}
               closedPnL={portfolioData.summary.closedPnL || 0}
               totalPnLWithClosed={portfolioData.summary.totalPnLWithClosed || 0}
-              onHover={setHoveredPosition}
+              onHover={() => {}}
               mode="network"
             />
           </div>

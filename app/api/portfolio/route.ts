@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://uanwkcczaakybpljxmym.supabase.co';
@@ -82,7 +82,7 @@ export type PortfolioResponse = {
   summary: PortfolioSummary;
 };
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Fetch all positions (both active and closed)
     const { data: allPositions, error } = await supabase
@@ -169,7 +169,7 @@ export async function GET(req: NextRequest) {
     const latestTsByContract = new Map<string, number>();
     
     // Debug: Log all price data for FLIPR
-    const fliprPriceData = priceData?.filter((row: any) => 
+    const fliprPriceData = priceData?.filter((row: { token_contract: string }) => 
       row.token_contract === 'JCBKQBPvnjr7emdQGCNM8wtE8AZjyvJgh7JMvkfYxypm'
     );
     console.log('FLIPR Price Data Found:', fliprPriceData?.length || 0, 'records');
@@ -178,13 +178,13 @@ export async function GET(req: NextRequest) {
     }
     
     // Debug: Check what token contracts we actually have in price data
-    const uniqueContracts = [...new Set(priceData?.map((row: any) => row.token_contract) || [])];
+    const uniqueContracts = [...new Set(priceData?.map((row: { token_contract: string }) => row.token_contract) || [])];
     console.log('Total price records:', priceData?.length || 0);
     console.log('Unique token contracts in price data:', uniqueContracts.length);
     console.log('Sample contracts:', uniqueContracts.slice(0, 5));
     
     // Check for FLIPR-like contracts (starting with JCBKQBPvnjr7emdQGCNM8)
-    const fliprLikeContracts = priceData?.filter((row: any) => 
+    const fliprLikeContracts = priceData?.filter((row: { token_contract: string }) => 
       row.token_contract?.startsWith('JCBKQBPvnjr7emdQGCNM8')
     );
     console.log('FLIPR-like contracts found:', fliprLikeContracts?.length || 0);
@@ -195,13 +195,13 @@ export async function GET(req: NextRequest) {
     }
     
     // Check if FLIPR contract exists with different casing or format
-    const fliprVariations = priceData?.filter((row: any) => 
+    const fliprVariations = priceData?.filter((row: { token_contract: string }) => 
       row.token_contract?.toLowerCase().includes('jcbkqbpvnjr7emdqgcnm8wte8azjyvjgh7jmvkfyxypm') ||
       row.token_contract?.toLowerCase().includes('flipr')
     );
     console.log('FLIPR variations found:', fliprVariations?.length || 0);
     
-    priceData?.forEach((row: any) => {
+    priceData?.forEach((row: { chain: string; token_contract: string; price_usd: number; timestamp: string; created_at: string }) => {
       const chain = (row.chain || '').toString().toLowerCase();
       const key = `${row.token_contract}_${chain}`;
       const tsRaw = row.timestamp ?? row.created_at ?? 0;
@@ -306,7 +306,7 @@ export async function GET(req: NextRequest) {
     console.log('- Total PnL with closed:', totalPnLWithClosed);
     
     // Calculate P&L % from starting value of $2000
-    const startingValue = 2000;
+    // const startingValue = 2000;
     const totalPnLPercent = totalValue > 0 ? (totalPnL / totalValue) * 100 : 0;
     
     // Chain distribution
@@ -369,7 +369,7 @@ export async function GET(req: NextRequest) {
     
     // Calculate new requested metrics
     const percentDeployed = portfolioValue > 0 ? (totalValue / portfolioValue) * 100 : 0;
-    const lotusRow: any = walletBalances?.find((b: any) => (b.chain || '').toLowerCase() === 'lotus');
+    const lotusRow = walletBalances?.find((b: { chain: string }) => (b.chain || '').toLowerCase() === 'lotus');
     const lotusBalance = lotusRow?.balance_usd || 0;
     // Read native amount from any of the commonly used column names
     const lotusAmount = Number(

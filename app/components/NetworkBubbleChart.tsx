@@ -28,7 +28,7 @@ interface NetworkBubbleChartProps {
   mode?: 'network' | 'position'; // New prop to distinguish display mode
 }
 
-export default function NetworkBubbleChart({ positions, closedPositions = [], nativeBalances = [], portfolioValue = 0, onNetworkClick, onHover, network, closedPnL = 0, totalPnLWithClosed = 0, mode = 'network' }: NetworkBubbleChartProps) {
+export default function NetworkBubbleChart({ positions, closedPositions = [], nativeBalances = [], portfolioValue = 0, onNetworkClick, onHover, mode = 'network' }: NetworkBubbleChartProps) {
   const [hoveredBubble, setHoveredBubble] = useState<string | null>(null);
 
   const networkData = useMemo(() => {
@@ -68,7 +68,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
         acc[network].positionCount += 1;
         acc[network].positions.push(position);
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as Record<string, { network: string; tokenValue: number; nativeValue: number; pnl: number; positionCount: number; positions: PortfolioPosition[] }>);
 
       // Add native balances to each network
       nativeBalances.forEach(balance => {
@@ -114,7 +114,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       });
 
       // Convert to array and calculate percentages
-      return Object.values(networkTotals).map((net: any) => {
+      return Object.values(networkTotals).map((net: { network: string; tokenValue: number; nativeValue: number; pnl: number; positionCount: number; positions: PortfolioPosition[]; isComingSoon?: boolean }) => {
         const totalValue = net.tokenValue + net.nativeValue;
         return {
           ...net,
@@ -129,7 +129,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
             // Calculate total investment in USD from executed entries
             const networkClosedInvestment = networkClosedPositions.reduce((sum, pos) => {
               const executedEntries = pos.entries?.filter(entry => entry.status === 'executed') || [];
-              const entryInvestment = executedEntries.reduce((entrySum, entry) => entrySum + ((entry as any).cost_usd || 0), 0);
+              const entryInvestment = executedEntries.reduce((entrySum, entry) => entrySum + ((entry as { cost_usd?: number }).cost_usd || 0), 0);
               return sum + entryInvestment;
             }, 0);
             
@@ -168,24 +168,24 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
   };
 
   // Get network color for a position
-  const getNetworkColor = (position: any) => {
+  const getNetworkColor = (position: { token_chain: string }) => {
     const chain = position.token_chain?.toLowerCase();
     return networkColors[chain as keyof typeof networkColors] || '#ffffff';
   };
 
-  // Position colors for individual tokens
-  const positionColors = [
-    '#e267ff', // Purple
-    '#7a7eff', // Blue
-    '#ff6a3d', // Orange
-    '#28d8c1', // Teal
-    '#ff6ab1', // Pink
-    '#4ade80', // Green
-    '#f59e0b', // Amber
-    '#ef4444', // Red
-    '#8b5cf6', // Violet
-    '#06b6d4'  // Cyan
-  ];
+  // Position colors for individual tokens (unused but kept for future use)
+  // const positionColors = [
+  //   '#e267ff', // Purple
+  //   '#7a7eff', // Blue
+  //   '#ff6a3d', // Orange
+  //   '#28d8c1', // Teal
+  //   '#ff6ab1', // Pink
+  //   '#4ade80', // Green
+  //   '#f59e0b', // Amber
+  //   '#ef4444', // Red
+  //   '#8b5cf6', // Violet
+  //   '#06b6d4'  // Cyan
+  // ];
 
   const nativeTokenSymbols = {
     solana: 'SOL',
@@ -195,7 +195,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
   };
 
   // Smart positioning - different logic for network vs position mode
-  const getBubblePositions = (networkData: any[]) => {
+  const getBubblePositions = (networkData: Array<{ network: string; totalValue: number; percentage: number; positionCount: number; pnlPercent: number; totalPnlPercent?: number; tokenValue: number; nativeValue: number; pnl: number; positions: PortfolioPosition[]; isComingSoon?: boolean }>) => {
     const centerX = 400;
     const centerY = 300;
     const positions: { x: number; y: number }[] = [];
@@ -306,7 +306,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     }
   };
 
-  const handleBubbleClick = (networkData: any) => {
+  const handleBubbleClick = (networkData: { network: string; isComingSoon?: boolean }) => {
     // Don't navigate for coming soon networks
     if (networkData.isComingSoon) {
       return;
@@ -320,9 +320,9 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     }
   };
 
-  const handleBubbleHover = (networkData: any) => {
+  const handleBubbleHover = (networkData: { network: string; positions?: PortfolioPosition[] }) => {
     setHoveredBubble(networkData.network);
-    if (onHover && networkData.positions.length > 0) {
+    if (onHover && networkData.positions && networkData.positions.length > 0) {
       onHover(networkData.positions[0]); // Show first position as example
     }
   };
@@ -385,7 +385,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                   // Network mode - show network info
                   <>
                     <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
-                    {segment.isComingSoon ? (
+                    {(segment as { isComingSoon?: boolean }).isComingSoon ? (
                       <>
                         <div className="text-sm font-semibold text-white/90">Coming Soon</div>
                         <div className="text-xs font-medium text-white/60">
@@ -419,8 +419,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                         <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% Active PnL
                         </div>
-                        <div className={`text-sm font-semibold ${segment.totalPnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                          {segment.totalPnlPercent >= 0 ? '+' : ''}{segment.totalPnlPercent.toFixed(1)}% Total PnL
+                        <div className={`text-sm font-semibold ${(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? '+' : ''}{(segment as { totalPnlPercent?: number }).totalPnlPercent?.toFixed(1) || '0.0'}% Total PnL
                         </div>
                       </>
                     )}

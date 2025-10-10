@@ -7,7 +7,7 @@ import SpiralBackground from "../../components/SpiralBackground";
 
 export default function PastPerformancePage() {
   const { portfolioData, loading, error } = usePortfolioData();
-  const [hoveredPosition, setHoveredPosition] = useState<any>(null);
+  const [hoveredPosition, setHoveredPosition] = useState<{ id: string; token_ticker: string; token_chain: string; total_pnl_usd: number; total_pnl_pct: number; current_invested_usd: number; total_quantity: number } | null>(null);
 
   if (loading) {
     return (
