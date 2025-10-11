@@ -113,7 +113,7 @@ export default function PastPerformancePage() {
               nativeBalances={[]} // No native balances for past performance
               portfolioValue={totalValue}
               onHover={setHoveredPosition}
-              mode="position" // Use position mode to show individual closed positions
+              mode="performance" // Use performance mode to show only percentage gain
             />
           </div>
         </div>

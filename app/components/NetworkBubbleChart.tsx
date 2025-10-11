@@ -25,7 +25,7 @@ interface NetworkBubbleChartProps {
   network?: string;
   closedPnL?: number; // Total PnL from closed positions
   totalPnLWithClosed?: number; // Active PnL + Closed PnL
-  mode?: 'network' | 'position'; // New prop to distinguish display mode
+  mode?: 'network' | 'position' | 'performance'; // New prop to distinguish display mode
 }
 
 export default function NetworkBubbleChart({ positions, closedPositions = [], nativeBalances = [], portfolioValue = 0, onNetworkClick, onHover, mode = 'network' }: NetworkBubbleChartProps) {
@@ -51,23 +51,23 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       }));
     } else {
       // Network mode - group positions by network and calculate totals
-      const networkTotals = positions.reduce((acc, position) => {
-        const network = position.token_chain;
-        if (!acc[network]) {
-          acc[network] = {
-            network,
+    const networkTotals = positions.reduce((acc, position) => {
+      const network = position.token_chain;
+      if (!acc[network]) {
+        acc[network] = {
+          network,
             tokenValue: 0,
-            pnl: 0,
-            positionCount: 0,
+          pnl: 0,
+          positionCount: 0,
             positions: [],
             nativeValue: 0
-          };
-        }
+        };
+      }
         acc[network].tokenValue += position.current_invested_usd || 0;
-        acc[network].pnl += position.total_pnl_usd || 0;
-        acc[network].positionCount += 1;
-        acc[network].positions.push(position);
-        return acc;
+      acc[network].pnl += position.total_pnl_usd || 0;
+      acc[network].positionCount += 1;
+      acc[network].positions.push(position);
+      return acc;
       }, {} as Record<string, { network: string; tokenValue: number; nativeValue: number; pnl: number; positionCount: number; positions: PortfolioPosition[] }>);
 
       // Add native balances to each network
@@ -113,7 +113,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
         networkTotals[mockNet.network] = mockNet;
       });
 
-      // Convert to array and calculate percentages
+    // Convert to array and calculate percentages
       return Object.values(networkTotals).map((net: { network: string; tokenValue: number; nativeValue: number; pnl: number; positionCount: number; positions: PortfolioPosition[]; isComingSoon?: boolean }) => {
         const totalValue = net.tokenValue + net.nativeValue;
         return {
@@ -219,12 +219,12 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       const largestBubble = sortedData[0];
       const largestSize = getBubbleSize(largestBubble.percentage, largestBubble.pnlPercent);
       const largestRadius = largestSize / 2;
-      
-      for (let i = 0; i < sortedData.length; i++) {
-        const segment = sortedData[i];
+    
+    for (let i = 0; i < sortedData.length; i++) {
+      const segment = sortedData[i];
         const size = getBubbleSize(segment.percentage, segment.pnlPercent);
-        const radius = size / 2;
-        
+      const radius = size / 2;
+      
         let position;
         
         if (segment === largestBubble) {
@@ -267,13 +267,13 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
           const angle = ((i - 1) * 2 * Math.PI) / (sortedData.length - 1);
           const circleRadius = largestRadius + radius + spacing;
           
-          position = {
+        position = {
             x: centerX + Math.cos(angle) * circleRadius,
             y: centerY + Math.sin(angle) * circleRadius
-          };
-        }
-        
-        positions.push(position);
+        };
+      }
+      
+      positions.push(position);
       }
     }
     
@@ -299,10 +299,10 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       return Math.max(minSize, Math.min(maxSize, size));
     } else {
       // Network mode bubbles
-      const minSize = 200;
+    const minSize = 200;
       const maxSize = 450;
-      const size = minSize + (percentage / 100) * (maxSize - minSize);
-      return Math.max(minSize, Math.min(maxSize, size));
+    const size = minSize + (percentage / 100) * (maxSize - minSize);
+    return Math.max(minSize, Math.min(maxSize, size));
     }
   };
 
@@ -384,7 +384,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                 {mode === 'network' ? (
                   // Network mode - show network info
                   <>
-                    <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
+                <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
                     {(segment as { isComingSoon?: boolean }).isComingSoon ? (
                       <>
                         <div className="text-sm font-semibold text-white/90">Coming Soon</div>
@@ -394,8 +394,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                       </>
                     ) : (
                       <>
-                        <div className="text-sm font-semibold text-white/90">{segment.percentage.toFixed(1)}% Share</div>
-                        <div className="text-xs font-medium text-white/80">
+                <div className="text-sm font-semibold text-white/90">{segment.percentage.toFixed(1)}% Share</div>
+                <div className="text-xs font-medium text-white/80">
                           {(() => {
                             const nativeSymbol = nativeTokenSymbols[segment.network.toLowerCase() as keyof typeof nativeTokenSymbols] || 'TOKEN';
                             const totalValue = segment.totalValue;
@@ -425,16 +425,45 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                       </>
                     )}
                   </>
-                ) : (
-                  // Position mode - show simplified position info
+                ) : mode === 'performance' ? (
+                  // Performance mode - show only percentage gain
                   <>
                     <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
                     <div className={`text-lg font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      ${(segment.pnl || 0).toFixed(2)}
-                    </div>
-                    <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}%
                     </div>
+                  </>
+                ) : (
+                  // Position mode - show detailed position info
+                  <>
+                    <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
+                    <div className="text-sm font-medium text-white/90">
+                      {segment.positionCount} Tokens: ${(segment.tokenValue / 1000).toFixed(2)}k
+                    </div>
+                    <div className="text-xs font-medium text-white/80">
+                      {(() => {
+                        const nativeSymbol = nativeTokenSymbols[segment.network.toLowerCase() as keyof typeof nativeTokenSymbols] || 'TOKEN';
+                        const totalValue = segment.totalValue;
+                        
+                        // Simple calculation: USD value ÷ token price = token amount
+                        const prices = {
+                          'SOL': 230,    // ~$230 per SOL
+                          'ETH': 3400,   // ~$3,400 per ETH  
+                          'BNB': 1280    // ~$1,280 per BNB
+                        };
+                        
+                        const price = prices[nativeSymbol as keyof typeof prices] || 1;
+                        const tokenAmount = totalValue / price;
+                        
+                        return `$${(totalValue / 1000).toFixed(2)}k Total (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
+                      })()}
+                </div>
+                <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% Active PnL
+                </div>
+                    <div className={`text-sm font-semibold ${(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? '+' : ''}{(segment as { totalPnlPercent?: number }).totalPnlPercent?.toFixed(1) || '0.0'}% Total PnL
+                </div>
                   </>
                 )}
               </div>
