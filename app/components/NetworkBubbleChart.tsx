@@ -457,13 +457,10 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                         
                         return `$${(totalValue / 1000).toFixed(2)}k Total (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
                       })()}
-                </div>
-                <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% Active PnL
-                </div>
-                    <div className={`text-sm font-semibold ${(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {(segment as { totalPnlPercent?: number }).totalPnlPercent && (segment as { totalPnlPercent?: number }).totalPnlPercent! >= 0 ? '+' : ''}{(segment as { totalPnlPercent?: number }).totalPnlPercent?.toFixed(1) || '0.0'}% Total PnL
-                </div>
+                    </div>
+                    <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% PnL
+                    </div>
                   </>
                 )}
               </div>
