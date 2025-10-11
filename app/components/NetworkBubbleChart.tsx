@@ -201,11 +201,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     const positions: { x: number; y: number }[] = [];
     
     // Sort by size (largest first)
-    // For position mode, sort by PnL percentage if available, otherwise by portfolio percentage
+    // For position mode, sort by value/amount (percentage), not PnL
     const sortedData = [...networkData].sort((a, b) => {
-      if (mode === 'position' && a.pnlPercent !== undefined && b.pnlPercent !== undefined) {
-        return Math.abs(b.pnlPercent) - Math.abs(a.pnlPercent);
-      }
       return b.percentage - a.percentage;
     });
     
@@ -282,17 +279,15 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
 
   const getBubbleSize = (percentage: number, pnlPercent?: number) => {
     if (mode === 'position') {
-      // For past performance, use PnL percentage if available, otherwise use portfolio percentage
-      const sizeValue = pnlPercent !== undefined ? Math.abs(pnlPercent) : percentage;
+      // For position mode, size based on value/amount (percentage), not PnL
+      const sizeValue = percentage;
       
       // 15% bigger bubbles for position mode
       const minSize = 184; // 160 * 1.15
       const maxSize = 322; // 280 * 1.15
       
-      // Scale based on the maximum value in the dataset for better distribution
-      const maxValue = Math.max(...networkData.map(segment => 
-        Math.abs(segment.pnlPercent || segment.percentage)
-      ));
+      // Scale based on the maximum percentage in the dataset for better distribution
+      const maxValue = Math.max(...networkData.map(segment => segment.percentage));
       
       const normalizedValue = maxValue > 0 ? (sizeValue / maxValue) * 100 : 0;
       const size = minSize + (normalizedValue / 100) * (maxSize - minSize);
