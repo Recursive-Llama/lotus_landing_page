@@ -49,6 +49,21 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
         percentage: totalValue > 0 ? ((position.current_invested_usd || 0) / totalValue) * 100 : 0,
         pnlPercent: position.total_pnl_pct || 0
       }));
+    } else if (mode === 'performance') {
+      // Performance mode - treat each closed position as a separate bubble, sized by PnL%
+      const totalValue = positions.reduce((sum, pos) => sum + (pos.current_invested_usd || 0), 0);
+      
+      return positions.map((position) => ({
+        network: position.token_ticker, // Use position name instead of network
+        tokenValue: position.current_invested_usd || 0,
+        pnl: position.total_pnl_usd || 0,
+        positionCount: position.total_quantity || 0,
+        positions: [position],
+        nativeValue: 0, // No native value for individual positions
+        totalValue: position.current_invested_usd || 0,
+        percentage: totalValue > 0 ? ((position.current_invested_usd || 0) / totalValue) * 100 : 0,
+        pnlPercent: position.total_pnl_pct || 0
+      }));
     } else {
       // Network mode - group positions by network and calculate totals
     const networkTotals = positions.reduce((acc, position) => {
@@ -201,18 +216,26 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     const positions: { x: number; y: number }[] = [];
     
     // Sort by size (largest first)
-    // For position mode, sort by value/amount (percentage), not PnL
     const sortedData = [...networkData].sort((a, b) => {
-      return b.percentage - a.percentage;
+      if (mode === 'performance') {
+        // For performance mode, sort by PnL percentage magnitude (biggest moves first)
+        return Math.abs(b.pnlPercent || 0) - Math.abs(a.pnlPercent || 0);
+      } else if (mode === 'position') {
+        // For position mode, sort by value/amount (percentage), not PnL
+        return b.percentage - a.percentage;
+      } else {
+        // For network mode, sort by portfolio percentage
+        return b.percentage - a.percentage;
+      }
     });
     
-    if (mode === 'position') {
-      // Position mode - simple circle layout
+    if (mode === 'position' || mode === 'performance') {
+      // Position mode and Performance mode - simple circle layout
       const bubbleAreaCenterX = 450; // Center of bubble area
       const bubbleAreaCenterY = 350;
       const spacing = 33; // Spacing between bubbles
       
-      // Find largest bubble (already sorted by percentage, so index 0)
+      // Find largest bubble (already sorted, so index 0)
       const largestBubble = sortedData[0];
       const largestSize = getBubbleSize(largestBubble.percentage, largestBubble.pnlPercent);
       const largestRadius = largestSize / 2;
@@ -288,6 +311,19 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       
       // Scale based on the maximum percentage in the dataset for better distribution
       const maxValue = Math.max(...networkData.map(segment => segment.percentage));
+      
+      const normalizedValue = maxValue > 0 ? (sizeValue / maxValue) * 100 : 0;
+      const size = minSize + (normalizedValue / 100) * (maxSize - minSize);
+      return Math.max(minSize, Math.min(maxSize, size));
+    } else if (mode === 'performance') {
+      // For performance mode, size based on PnL percentage magnitude (biggest moves)
+      const sizeValue = Math.abs(pnlPercent || 0);
+      
+      const minSize = 80;
+      const maxSize = 200;
+      
+      // Scale based on the maximum PnL percentage magnitude in the dataset
+      const maxValue = Math.max(...networkData.map(segment => Math.abs(segment.pnlPercent || 0)));
       
       const normalizedValue = maxValue > 0 ? (sizeValue / maxValue) * 100 : 0;
       const size = minSize + (normalizedValue / 100) * (maxSize - minSize);
@@ -452,10 +488,10 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                         
                         return `$${(totalValue / 1000).toFixed(2)}k Total (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
                       })()}
-                    </div>
-                    <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                      {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% PnL
-                    </div>
+                </div>
+                <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% PnL
+                </div>
                   </>
                 )}
               </div>
