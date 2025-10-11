@@ -319,8 +319,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
       // For performance mode, size based on PnL percentage magnitude (biggest moves)
       const sizeValue = Math.abs(pnlPercent || 0);
       
-      const minSize = 80;
-      const maxSize = 200;
+      const minSize = 120; // Increased from 80
+      const maxSize = 250; // Increased from 200
       
       // Scale based on the maximum PnL percentage magnitude in the dataset
       const maxValue = Math.max(...networkData.map(segment => Math.abs(segment.pnlPercent || 0)));
@@ -380,8 +380,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
         {(() => {
           const positions = getBubblePositions(networkData);
           return networkData.map((segment, index) => {
-            const color = mode === 'position' 
-              ? getNetworkColor(segment.positions?.[0] || segment) // Use network color for position mode
+            const color = (mode === 'position' || mode === 'performance')
+              ? getNetworkColor(segment.positions?.[0] || segment) // Use network color for position and performance modes
               : networkColors[segment.network.toLowerCase() as keyof typeof networkColors] || '#ffffff';
             const rgb = hexToRgb(color);
             const size = getBubbleSize(segment.percentage, segment.pnlPercent);
