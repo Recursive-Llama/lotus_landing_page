@@ -94,6 +94,13 @@ export default function PortfolioSection() {
                 <div className="text-sm text-white/70">% Deployed</div>
               </div>
               
+              <div className="p-4 rounded-xl border border-white/20 bg-white/5">
+                <div className="text-2xl font-bold text-white mb-1">
+                  {portfolioData.summary.positionCount || 0}
+                </div>
+                <div className="text-sm text-white/70">Total Positions</div>
+              </div>
+              
               <div 
                 className="p-4 rounded-xl border border-white/20 bg-white/5"
                 style={{
