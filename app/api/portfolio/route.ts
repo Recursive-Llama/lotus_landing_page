@@ -78,6 +78,19 @@ export type PortfolioSummary = {
   }>;
 };
 
+// Minimal shape for wallet balance rows used in native price derivation
+type WalletBalanceRow = {
+  chain?: string;
+  balance_usd?: number;
+  balance?: number;
+  balance_float?: number;
+  balance_native?: number;
+  native_balance?: number;
+  last_updated?: string;
+  updated_at?: string;
+  created_at?: string;
+};
+
 export type PortfolioResponse = {
   positions: PortfolioPosition[];
   closedPositions: PortfolioPosition[];
@@ -154,8 +167,8 @@ export async function GET() {
     const nativePrices: Record<string, number> = {};
     if (walletBalances && Array.isArray(walletBalances)) {
       // Keep the most recent record per chain
-      const latestByChain = new Map<string, any>();
-      walletBalances.forEach((row: any) => {
+      const latestByChain = new Map<string, WalletBalanceRow>();
+      walletBalances.forEach((row: WalletBalanceRow) => {
         const chain = (row.chain || '').toString().toLowerCase();
         if (!chain || chain === 'lotus') return;
         const prev = latestByChain.get(chain);
@@ -166,7 +179,7 @@ export async function GET() {
         }
       });
 
-      latestByChain.forEach((row, chain) => {
+      latestByChain.forEach((row: WalletBalanceRow, chain: string) => {
         const nativeAmount = Number(
           row?.balance ?? row?.balance_float ?? row?.balance_native ?? row?.native_balance ?? 0
         );

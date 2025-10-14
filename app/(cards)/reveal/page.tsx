@@ -136,7 +136,7 @@ export default function RevealPage() {
         clearTimeout(completionTimer);
       };
       
-    } catch (e) {
+    } catch {
       setPhase("error");
     }
   };
