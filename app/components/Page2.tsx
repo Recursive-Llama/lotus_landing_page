@@ -13,51 +13,97 @@ export default function Page2() {
         </p>
       </div>
       
-      {/* Three Feature Boxes - Responsive Layout */}
-      <div className="flex flex-col gap-8 mt-16 md:flex-row md:items-start md:justify-between md:gap-10 md:-mt-32">
+      {/* Mobile: Stacked Layout */}
+      <div className="flex flex-col gap-8 mt-16 md:hidden">
         {/* Box 1 - What is Lotus Trader */}
-        <div className="w-full md:max-w-sm">
+        <div className="w-full">
           <div className="p-6 rounded-lg border border-teal-400/40 bg-white/5 backdrop-blur-sm shadow-[0_0_30px_rgba(20,184,166,0.3)] animate-pulse-teal">
-            <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">What is Lotus Trader⚘⟁?</h2>
-            <p className="text-sm md:text-base text-white/85 mb-3">
+            <h2 className="text-xl font-semibold text-white/90 mb-4 text-center">What is Lotus Trader⚘⟁?</h2>
+            <p className="text-sm text-white/85 mb-3">
               A trading system where charts drive everything. No coding, no manual setup - just visual input that becomes automated execution and lessons for evolution.
             </p>
-            <p className="text-sm md:text-base text-white/75">
+            <p className="text-sm text-white/75">
               This isn&apos;t another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
             </p>
           </div>
         </div>
         
         {/* Box 2 - What Makes Different */}
-        <div className="w-full md:max-w-sm">
+        <div className="w-full">
           <div className="p-6 rounded-lg border border-blue-400/40 bg-white/5 backdrop-blur-sm shadow-[0_0_30px_rgba(59,130,246,0.3)] animate-pulse-blue">
-            <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">What Makes ⚘⟁ Different?</h2>
-            <p className="text-sm md:text-base text-white/75 mb-3">
+            <h2 className="text-xl font-semibold text-white/90 mb-4 text-center">What Makes ⚘⟁ Different?</h2>
+            <p className="text-sm text-white/75 mb-3">
               <span className="text-white/90 font-medium">Traditional systems:</span> You code strategies, they execute them.
             </p>
-            <p className="text-sm md:text-base text-white/75 mb-3">
+            <p className="text-sm text-white/75 mb-3">
               <span className="text-white/90 font-medium">Lotus Trader:</span> You use natural language and show it charts. It understands them natively, plans execution, and learns from outcomes.
             </p>
-            <p className="text-sm md:text-base text-white/75">
+            <p className="text-sm text-white/75">
               The difference is that charts are the strategy. No translation needed between what you see and what gets executed.
             </p>
           </div>
         </div>
         
         {/* Box 3 - Who Can Use */}
-        <div className="w-full md:max-w-sm">
+        <div className="w-full">
           <div className="p-6 rounded-lg border border-purple-400/40 bg-white/5 backdrop-blur-sm shadow-[0_0_30px_rgba(147,51,234,0.3)] animate-pulse-purple">
-            <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">Who Can Use ⚘⟁?</h2>
-            <p className="text-sm md:text-base text-white/75 mb-3">
+            <h2 className="text-xl font-semibold text-white/90 mb-4 text-center">Who Can Use ⚘⟁?</h2>
+            <p className="text-sm text-white/75 mb-3">
               <span className="text-white/90 font-medium">New?</span> Automate strategies from proven traders, learn through execution.
             </p>
-            <p className="text-sm md:text-base text-white/75 mb-3">
+            <p className="text-sm text-white/75 mb-3">
               <span className="text-white/90 font-medium">Experienced?</span> Scale your strategies across more opportunities, perfect your execution through recursive learning.
             </p>
-            <p className="text-sm md:text-base text-white/75">
+            <p className="text-sm text-white/75">
               <span className="text-white/90 font-medium">Professional?</span> Combine multiple strategies into unified execution, adapt & generate alpha through pattern innovation.
             </p>
           </div>
+        </div>
+      </div>
+
+      {/* Desktop: Original Positioned Layout */}
+      {/* Top Row - Box 1 on the left, move up a bit */}
+      <div className="hidden md:flex justify-start mt-16">
+        <div className="p-6 rounded-lg border border-teal-400/40 bg-white/5 backdrop-blur-sm max-w-sm shadow-[0_0_30px_rgba(20,184,166,0.3)] animate-pulse-teal">
+          <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">What is Lotus Trader⚘⟁?</h2>
+          <p className="text-sm md:text-base text-white/85 mb-3">
+            A trading system where charts drive everything. No coding, no manual setup - just visual input that becomes automated execution and lessons for evolution.
+          </p>
+          <p className="text-sm md:text-base text-white/75">
+            This isn&apos;t another bot that follows your rules. This is a system that sees what you see, understands it, and learns from every outcome to get better at trading.
+          </p>
+        </div>
+      </div>
+      
+      {/* Middle Row - Box 2 centered, move down a bit */}
+      <div className="hidden md:flex justify-center -mt-32">
+        <div className="p-6 rounded-lg border border-blue-400/40 bg-white/5 backdrop-blur-sm max-w-sm shadow-[0_0_30px_rgba(59,130,246,0.3)] animate-pulse-blue">
+          <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">What Makes ⚘⟁ Different?</h2>
+          <p className="text-sm md:text-base text-white/75 mb-3">
+            <span className="text-white/90 font-medium">Traditional systems:</span> You code strategies, they execute them.
+          </p>
+          <p className="text-sm md:text-base text-white/75 mb-3">
+            <span className="text-white/90 font-medium">Lotus Trader:</span> You use natural language and show it charts. It understands them natively, plans execution, and learns from outcomes.
+          </p>
+          <p className="text-sm md:text-base text-white/75">
+            The difference is that charts are the strategy. No translation needed between what you see and what gets executed.
+          </p>
+        </div>
+      </div>
+      
+      {/* Bottom Row - Box 3 on the right, move down a bit */}
+      <div className="hidden md:flex justify-end -mt-40">
+        <div className="p-6 rounded-lg border border-purple-400/40 bg-white/5 backdrop-blur-sm max-w-sm shadow-[0_0_30px_rgba(147,51,234,0.3)] animate-pulse-purple">
+          <h2 className="text-xl md:text-2xl font-semibold text-white/90 mb-4 text-center">Who Can Use ⚘⟁?</h2>
+          <p className="text-sm md:text-base text-white/75 mb-3">
+            <span className="text-white/90 font-medium">New?</span> Automate strategies from proven traders, learn through execution.
+          </p>
+          <p className="text-sm md:text-base text-white/75 mb-3">
+            <span className="text-white/90 font-medium">Experienced?</span> Scale your strategies across more opportunities, perfect your execution through recursive learning.
+          </p>
+          <p className="text-sm md:text-base text-white/75">
+            <span className="text-white/90 font-medium">Professional?</span> Combine multiple strategies into unified execution, adapt & generate alpha through pattern innovation.
+          </p>
         </div>
       </div>
       
