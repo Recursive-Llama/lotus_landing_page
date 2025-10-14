@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { usePortfolioData } from "../../hooks/usePortfolioData";
 import NetworkBubbleChart from "../../components/NetworkBubbleChart";
@@ -12,7 +11,6 @@ export default function NetworkFocusedPage() {
   const router = useRouter();
   const network = params.network as string;
   const { portfolioData, loading, error } = usePortfolioData();
-  const [hoveredPosition, setHoveredPosition] = useState<PortfolioPosition | null>(null);
 
   if (loading) {
     return (
@@ -48,7 +46,7 @@ export default function NetworkFocusedPage() {
   const networkTotalValue = networkTokenValue + networkNativeValue;
   const networkTokenPnL = networkPositions.reduce((sum, pos) => sum + (pos.total_pnl_usd || 0), 0);
   const networkTokenPnLPercent = networkTokenValue > 0 ? (networkTokenPnL / networkTokenValue) * 100 : 0;
-  const networkShare = portfolioData.summary.portfolioValue > 0 ? (networkTotalValue / portfolioData.summary.portfolioValue) * 100 : 0;
+  // const networkShare = portfolioData.summary.portfolioValue > 0 ? (networkTotalValue / portfolioData.summary.portfolioValue) * 100 : 0;
   const networkDeployedPercent = networkTotalValue > 0 ? (networkTokenValue / networkTotalValue) * 100 : 0;
 
   // Get top 5 positions and others
@@ -60,7 +58,7 @@ export default function NetworkFocusedPage() {
   const othersValue = otherPositions.reduce((sum, pos) => sum + (pos.current_invested_usd || 0), 0);
   const othersPnL = otherPositions.reduce((sum, pos) => sum + (pos.total_pnl_usd || 0), 0);
   const othersPnLPercent = othersValue > 0 ? (othersPnL / othersValue) * 100 : 0;
-  const othersShare = networkTotalValue > 0 ? (othersValue / networkTotalValue) * 100 : 0;
+  // const othersShare = networkTotalValue > 0 ? (othersValue / networkTotalValue) * 100 : 0;
 
   // Create "Others" position object
   const othersPosition: PortfolioPosition = {
@@ -96,8 +94,8 @@ export default function NetworkFocusedPage() {
 
   const nativePrices = portfolioData.summary.nativePrices || {};
   const price = nativePrices[network] || 0;
-  const nativeSymbol = nativeTokenSymbols[network as keyof typeof nativeTokenSymbols] || 'TOKEN';
-  const nativeAmount = price > 0 ? networkNativeValue / price : 0;
+  // const nativeSymbol = nativeTokenSymbols[network as keyof typeof nativeTokenSymbols] || 'TOKEN';
+  // const nativeAmount = price > 0 ? networkNativeValue / price : 0;
 
   return (
     <main className="relative bg-[#0a0b10] min-h-screen">
@@ -166,10 +164,10 @@ export default function NetworkFocusedPage() {
 
           {/* Right Side - Position Bubbles */}
           <div className="flex-1">
-            <NetworkBubbleChart 
+              <NetworkBubbleChart 
               positions={displayPositions}
               nativePrices={portfolioData.summary.nativePrices || {}}
-              onHover={setHoveredPosition}
+              onHover={() => {}}
               mode="position"
             />
           </div>
