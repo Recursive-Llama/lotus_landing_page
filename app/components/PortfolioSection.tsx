@@ -45,7 +45,7 @@ export default function PortfolioSection() {
   return (
     <section id="portfolio" className="relative bg-[#0a0b10] min-h-screen">
       <SpiralBackground />
-      <div className="container mx-auto px-6 pt-16 pb-0 relative z-10">
+      <div className="container mx-auto px-6 pt-28 pb-0 relative z-10">
         <div className="flex gap-8">
           {/* Left Side - Portfolio Metrics */}
           <div className="w-80 flex-shrink-0">
