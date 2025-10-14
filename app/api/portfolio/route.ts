@@ -51,6 +51,8 @@ export type PortfolioSummary = {
   lotusAcquired: number; // Lotus balance from wallet_balances
   lotusAmount?: number; // Actual Lotus token amount (native units)
   nativeBalances: Array<{ chain: string; balance_usd: number }>; // Native token balances for bubble chart
+  // Map of chain -> native token USD price derived from wallet_balances
+  nativePrices?: Record<string, number>;
   
   // Closed position metrics
   closedPnL: number; // Total PnL from closed positions
@@ -147,6 +149,32 @@ export async function GET() {
       return sum + (balance.balance_usd || 0);
     }, 0) || 0;
     console.log('Total native token balance (excluding Lotus):', totalNativeBalance);
+
+    // Derive native token USD prices per chain from the most recent wallet_balances rows
+    const nativePrices: Record<string, number> = {};
+    if (walletBalances && Array.isArray(walletBalances)) {
+      // Keep the most recent record per chain
+      const latestByChain = new Map<string, any>();
+      walletBalances.forEach((row: any) => {
+        const chain = (row.chain || '').toString().toLowerCase();
+        if (!chain || chain === 'lotus') return;
+        const prev = latestByChain.get(chain);
+        const rowTs = new Date(row.last_updated || row.updated_at || row.created_at || 0).getTime();
+        const prevTs = prev ? new Date(prev.last_updated || prev.updated_at || prev.created_at || 0).getTime() : -1;
+        if (rowTs >= prevTs) {
+          latestByChain.set(chain, row);
+        }
+      });
+
+      latestByChain.forEach((row, chain) => {
+        const nativeAmount = Number(
+          row?.balance ?? row?.balance_float ?? row?.balance_native ?? row?.native_balance ?? 0
+        );
+        const usd = Number(row?.balance_usd ?? 0);
+        const price = nativeAmount > 0 ? usd / nativeAmount : 0;
+        if (price > 0) nativePrices[chain] = price;
+      });
+    }
 
     // Get all recent price data (last 24 hours) - no filtering by positions
     console.log('Fetching all recent price data...');
@@ -291,7 +319,8 @@ export async function GET() {
     });
 
     // Calculate summary statistics
-    const totalValue = positionsWithValues.reduce((sum, pos) => sum + (pos.current_invested_usd || 0), 0);
+    const tokenValue = positionsWithValues.reduce((sum, pos) => sum + (pos.current_invested_usd || 0), 0);
+    const totalValue = tokenValue + totalNativeBalance; // Include native balances in totalValue
     const totalPnL = positionsWithValues.reduce((sum, pos) => sum + (pos.total_pnl_usd || 0), 0);
     
     // Calculate closed position PnL
@@ -363,12 +392,12 @@ export async function GET() {
     }));
 
     // Calculate new portfolio-level metrics
-    const portfolioValue = totalValue + totalNativeBalance;
+    const portfolioValue = totalValue; // totalValue now includes native balances
     const portfolioPnL = portfolioValue - 2000; // Starting value was $2000
     const portfolioPnLPercent = 2000 > 0 ? (portfolioPnL / 2000) * 100 : 0;
     
     // Calculate new requested metrics
-    const percentDeployed = portfolioValue > 0 ? (totalValue / portfolioValue) * 100 : 0;
+    const percentDeployed = portfolioValue > 0 ? (tokenValue / portfolioValue) * 100 : 0;
     const lotusRow = walletBalances?.find((b: { chain: string }) => (b.chain || '').toLowerCase() === 'lotus');
     const lotusBalance = lotusRow?.balance_usd || 0;
     // Read native amount from any of the commonly used column names
@@ -382,8 +411,9 @@ export async function GET() {
     
     // Debug: Log detailed breakdown
     console.log('Portfolio Value Breakdown:');
-    console.log('- Token Value (active positions):', totalValue.toFixed(2));
+    console.log('- Token Value (active positions):', tokenValue.toFixed(2));
     console.log('- Native Balances (excluding Lotus):', totalNativeBalance.toFixed(2));
+    console.log('- Total Value (tokens + native):', totalValue.toFixed(2));
     console.log('- Total Portfolio Value:', portfolioValue.toFixed(2));
     console.log('- Lotus Balance (excluded):', lotusBalance.toFixed(2));
     console.log('- Portfolio PnL:', portfolioPnL.toFixed(2));
@@ -406,6 +436,7 @@ export async function GET() {
       lotusAcquired: lotusBalance,
       lotusAmount,
       nativeBalances: walletBalances?.filter(balance => balance.chain !== 'lotus') || [],
+      nativePrices,
       
       // Closed position metrics
       closedPnL,

@@ -26,9 +26,10 @@ interface NetworkBubbleChartProps {
   closedPnL?: number; // Total PnL from closed positions
   totalPnLWithClosed?: number; // Active PnL + Closed PnL
   mode?: 'network' | 'position' | 'performance'; // New prop to distinguish display mode
+  nativePrices?: Record<string, number>;
 }
 
-export default function NetworkBubbleChart({ positions, closedPositions = [], nativeBalances = [], portfolioValue = 0, onNetworkClick, onHover, mode = 'network' }: NetworkBubbleChartProps) {
+export default function NetworkBubbleChart({ positions, closedPositions = [], nativeBalances = [], portfolioValue = 0, onNetworkClick, onHover, mode = 'network', nativePrices = {} }: NetworkBubbleChartProps) {
   const [hoveredBubble, setHoveredBubble] = useState<string | null>(null);
 
   const networkData = useMemo(() => {
@@ -209,6 +210,23 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     base: 'ETH' // Base uses ETH as native token
   };
 
+  const formatNumber = (value: number, decimals = 2) =>
+    Number(value || 0).toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+
+  const formatUsdCompact = (usd: number) => {
+    const abs = Math.abs(usd || 0);
+    if (abs >= 1_000_000) return `$${(usd / 1_000_000).toFixed(2)}M`;
+    if (abs >= 1_000) return `$${(usd / 1_000).toFixed(2)}k`;
+    return `$${(usd).toFixed(2)}`;
+  };
+
+  const variedPositionColors = ['#e267ff', '#7a7eff', '#ff6a3d', '#28d8c1', '#ff6ab1', '#4ade80', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+  const getVariedColorForTicker = (ticker: string) => {
+    let hash = 0;
+    for (let i = 0; i < ticker.length; i++) hash = (hash * 31 + ticker.charCodeAt(i)) >>> 0;
+    return variedPositionColors[hash % variedPositionColors.length];
+  };
+
   // Smart positioning - different logic for network vs position mode
   const getBubblePositions = (networkData: Array<{ network: string; totalValue: number; percentage: number; positionCount: number; pnlPercent: number; totalPnlPercent?: number; tokenValue: number; nativeValue: number; pnl: number; positions: PortfolioPosition[]; isComingSoon?: boolean }>) => {
     const centerX = 400;
@@ -380,9 +398,16 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
         {(() => {
           const positions = getBubblePositions(networkData);
           return networkData.map((segment, index) => {
-            const color = (mode === 'position' || mode === 'performance')
-              ? getNetworkColor(segment.positions?.[0] || segment) // Use network color for position and performance modes
-              : networkColors[segment.network.toLowerCase() as keyof typeof networkColors] || '#ffffff';
+            const color = (() => {
+              if (mode === 'performance') {
+                return getNetworkColor(segment.positions?.[0] || segment);
+              }
+              if (mode === 'position') {
+                const ticker = segment.positions?.[0]?.token_ticker || segment.network;
+                return getVariedColorForTicker(ticker);
+              }
+              return networkColors[segment.network.toLowerCase() as keyof typeof networkColors] || '#ffffff';
+            })();
             const rgb = hexToRgb(color);
             const size = getBubbleSize(segment.percentage, segment.pnlPercent);
             const position = positions[index];
@@ -391,7 +416,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
           return (
             <div
               key={segment.network}
-              className="absolute rounded-full cursor-pointer transition-all duration-500 flex items-center justify-center"
+              className={`absolute rounded-full ${mode === 'network' ? 'cursor-pointer' : 'cursor-default'} transition-all duration-500 flex items-center justify-center`}
               style={{
                 left: position.x - size / 2,
                 top: position.y - size / 2,
@@ -408,7 +433,10 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
               }}
               onMouseEnter={() => handleBubbleHover(segment)}
               onMouseLeave={handleBubbleLeave}
-              onClick={() => handleBubbleClick(segment)}
+              onClick={() => {
+                if (mode !== 'network') return; // Disable click for non-network modes
+                handleBubbleClick(segment);
+              }}
             >
               {/* Bubble content - different for network vs position mode */}
               <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white space-y-1">
@@ -426,26 +454,17 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                     ) : (
                       <>
                 <div className="text-sm font-semibold text-white/90">{segment.percentage.toFixed(1)}% Share</div>
-                <div className="text-xs font-medium text-white/80">
+                        <div className="text-xs font-medium text-white/80">
                           {(() => {
-                            const nativeSymbol = nativeTokenSymbols[segment.network.toLowerCase() as keyof typeof nativeTokenSymbols] || 'TOKEN';
-                            const totalValue = segment.totalValue;
-                            
-                            // Simple calculation: USD value ÷ token price = token amount
-                            const prices = {
-                              'SOL': 230,    // ~$230 per SOL
-                              'ETH': 3400,   // ~$3,400 per ETH  
-                              'BNB': 1280    // ~$1,280 per BNB
-                            };
-                            
-                            const price = prices[nativeSymbol as keyof typeof prices] || 1;
-                            const tokenAmount = totalValue / price;
-                            
-                            return `$${(totalValue / 1000).toFixed(2)}k Total (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
+                            const chain = segment.network.toLowerCase();
+                            const nativeSymbol = nativeTokenSymbols[chain as keyof typeof nativeTokenSymbols] || 'TOKEN';
+                            const price = nativePrices[chain] || 0;
+                            const tokenAmount = price > 0 ? segment.totalValue / price : 0;
+                            return `${formatUsdCompact(segment.totalValue)} (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
                           })()}
                         </div>
                         <div className="text-xs font-medium text-white/80">
-                          {segment.positionCount} Tokens: ${(segment.tokenValue / 1000).toFixed(2)}k
+                          {formatNumber(segment.positionCount)} Tokens: {formatUsdCompact(segment.tokenValue)}
                         </div>
                         <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                           {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}% Active PnL
@@ -457,11 +476,22 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                     )}
                   </>
                 ) : mode === 'performance' ? (
-                  // Performance mode - show only percentage gain
+                  // Performance mode - show percentage and $ profit
                   <>
                     <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
                     <div className={`text-lg font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                       {segment.pnlPercent >= 0 ? '+' : ''}{segment.pnlPercent.toFixed(1)}%
+                    </div>
+                    <div className="text-xs font-medium text-white/80">
+                      {(() => {
+                        const chain = segment.positions?.[0]?.token_chain?.toLowerCase() || '';
+                        const price = nativePrices[chain] || 0;
+                        const usdPnl = segment.positions?.[0]?.total_pnl_usd || 0;
+                        const nativePnl = price > 0 ? usdPnl / price : 0;
+                        const sign = usdPnl >= 0 ? '+' : '';
+                        const symbol = nativeTokenSymbols[chain as keyof typeof nativeTokenSymbols] || '';
+                        return `${sign}${formatNumber(Math.abs(nativePnl), 2)} ${symbol} (${sign}${formatUsdCompact(Math.abs(usdPnl))})`;
+                      })()}
                     </div>
                   </>
                 ) : (
@@ -469,24 +499,15 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                   <>
                     <div className="text-xl font-bold">{segment.network.toUpperCase()}</div>
                     <div className="text-sm font-medium text-white/90">
-                      {segment.positionCount} Tokens: ${(segment.tokenValue / 1000).toFixed(2)}k
+                      {formatNumber(segment.positionCount)} Tokens: {formatUsdCompact(segment.tokenValue)}
                     </div>
                     <div className="text-xs font-medium text-white/80">
                       {(() => {
-                        const nativeSymbol = nativeTokenSymbols[segment.network.toLowerCase() as keyof typeof nativeTokenSymbols] || 'TOKEN';
-                        const totalValue = segment.totalValue;
-                        
-                        // Simple calculation: USD value ÷ token price = token amount
-                        const prices = {
-                          'SOL': 230,    // ~$230 per SOL
-                          'ETH': 3400,   // ~$3,400 per ETH  
-                          'BNB': 1280    // ~$1,280 per BNB
-                        };
-                        
-                        const price = prices[nativeSymbol as keyof typeof prices] || 1;
-                        const tokenAmount = totalValue / price;
-                        
-                        return `$${(totalValue / 1000).toFixed(2)}k Total (${tokenAmount.toFixed(2)} ${nativeSymbol})`;
+                        const chain = (segment.positions?.[0]?.token_chain || '').toLowerCase();
+                        const nativeSymbol = nativeTokenSymbols[chain as keyof typeof nativeTokenSymbols] || 'TOKEN';
+                        const price = nativePrices[chain] || 0;
+                        const tokenAmount = price > 0 ? segment.totalValue / price : 0;
+                        return `${formatNumber(tokenAmount, 2)} ${nativeSymbol}`;
                       })()}
                 </div>
                 <div className={`text-sm font-semibold ${segment.pnlPercent >= 0 ? 'text-green-400' : 'text-red-400'}`}>

@@ -123,6 +123,7 @@ export default function PortfolioSection() {
               closedPositions={portfolioData.closedPositions || []}
               nativeBalances={portfolioData.summary.nativeBalances || []}
               portfolioValue={portfolioData.summary.portfolioValue || 0}
+              nativePrices={portfolioData.summary.nativePrices || {}}
               closedPnL={portfolioData.summary.closedPnL || 0}
               totalPnLWithClosed={portfolioData.summary.totalPnLWithClosed || 0}
               onHover={() => {}}

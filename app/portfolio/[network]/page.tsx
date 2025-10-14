@@ -94,15 +94,10 @@ export default function NetworkFocusedPage() {
     base: 'ETH'
   };
 
-  const prices = {
-    'SOL': 230,
-    'ETH': 3400,
-    'BNB': 1280
-  };
-
+  const nativePrices = portfolioData.summary.nativePrices || {};
+  const price = nativePrices[network] || 0;
   const nativeSymbol = nativeTokenSymbols[network as keyof typeof nativeTokenSymbols] || 'TOKEN';
-  const price = prices[nativeSymbol as keyof typeof prices] || 1;
-  const nativeAmount = networkNativeValue / price;
+  const nativeAmount = price > 0 ? networkNativeValue / price : 0;
 
   return (
     <main className="relative bg-[#0a0b10] min-h-screen">
@@ -173,6 +168,7 @@ export default function NetworkFocusedPage() {
           <div className="flex-1">
             <NetworkBubbleChart 
               positions={displayPositions}
+              nativePrices={portfolioData.summary.nativePrices || {}}
               onHover={setHoveredPosition}
               mode="position"
             />
