@@ -220,7 +220,7 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     return `$${(usd).toFixed(2)}`;
   };
 
-  const variedPositionColors = ['#e267ff', '#7a7eff', '#28d8c1', '#ff6ab1', '#4ade80', '#8b5cf6', '#06b6d4', '#14b8a6', '#3b82f6', '#a855f7'];
+  const variedPositionColors = ['#e267ff', '#7a7eff', '#ff6a3d', '#28d8c1', '#ff6ab1', '#4ade80', '#8b5cf6', '#06b6d4', '#14b8a6', '#3b82f6', '#a855f7'];
   const getVariedColorForTicker = (ticker: string) => {
     let hash = 0;
     for (let i = 0; i < ticker.length; i++) hash = (hash * 31 + ticker.charCodeAt(i)) >>> 0;
