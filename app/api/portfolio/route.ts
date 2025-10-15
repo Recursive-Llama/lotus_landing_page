@@ -14,6 +14,7 @@ export type PortfolioPosition = {
   total_investment_native: number;
   current_invested_usd: number; // Calculated from price data
   total_pnl_usd: number;
+  total_pnl_native?: number; // Native token PnL amount from database
   total_pnl_pct: number;
   total_quantity: number;
   avg_entry_price: number;

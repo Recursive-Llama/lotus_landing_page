@@ -485,9 +485,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
                     <div className="text-xs font-medium text-white/80">
                       {(() => {
                         const chain = segment.positions?.[0]?.token_chain?.toLowerCase() || '';
-                        const price = nativePrices[chain] || 0;
                         const usdPnl = segment.positions?.[0]?.total_pnl_usd || 0;
-                        const nativePnl = price > 0 ? usdPnl / price : 0;
+                        const nativePnl = segment.positions?.[0]?.total_pnl_native || 0;
                         const sign = usdPnl >= 0 ? '+' : '';
                         const symbol = nativeTokenSymbols[chain as keyof typeof nativeTokenSymbols] || '';
                         return `${sign}${formatNumber(Math.abs(nativePnl), 2)} ${symbol} (${sign}${formatUsdCompact(Math.abs(usdPnl))})`;
