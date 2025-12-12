@@ -79,31 +79,6 @@ export default function SpiralBackground() {
     return { paths, gradientId: "grad", stats: { width, height, pixelScale, totalTheta } };
   }, [size]);
 
-  // Build a static SVG data URL for mobile to rasterize once and rotate the bitmap smoothly
-  const mobileDataUrl = useMemo(() => {
-    const [width, height] = size;
-    if (width === 0 || height === 0 || width > 640) return "";
-    const yShift = -Math.round(height * 0.08);
-    const gradientStops = COLOR_STOPS.map((s, i) => `<stop offset="${s.stop * 100}%" stop-color="${s.color}" />`).join("");
-    const layer = (p: string, i: number) => [
-      `<g opacity="${(0.48 - i * 0.10).toFixed(2)}">`,
-      `<path d="${p}" stroke="url(#grad)" stroke-opacity="0.14" stroke-width="${(16 - i * 2.5).toFixed(2)}" stroke-linecap="round" fill="none" />`,
-      `<path d="${p}" stroke="url(#grad)" stroke-opacity="0.10" stroke-width="${(12 - i * 2).toFixed(2)}" stroke-linecap="round" fill="none" />`,
-      `<path d="${p}" stroke="url(#grad)" stroke-width="${(2.2 - i * 0.15).toFixed(2)}" stroke-linecap="round" fill="none" />`,
-      `</g>`
-    ].join("");
-    const svg = [
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 ${yShift} ${width} ${height}" preserveAspectRatio="xMidYMid slice">`,
-      `<defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">${gradientStops}</linearGradient></defs>`,
-      `<rect width="100%" height="100%" fill="#0a0b10"/>`,
-      `<g>`,
-      paths.map(layer).join(""),
-      `</g>`,
-      `</svg>`
-    ].join("");
-    return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-  }, [paths, size]);
-
   const prefersReducedMotion = useReducedMotion();
 
   // Canvas draw for mobile path. Draw once per size change; rotate the canvas element via CSS.
