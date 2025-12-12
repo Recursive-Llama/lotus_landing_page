@@ -11,6 +11,14 @@ export default function Hero() {
         <div className="flex justify-center gap-2 flex-wrap">
           <a
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs focus:outline-none"
+            href="/⚘WHITEPAPER_ Lotus⚘⟁3.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Whitepaper
+          </a>
+          <a
+            className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs focus:outline-none"
             href={LINKS.github}
             target="_blank"
             rel="noreferrer"
@@ -53,6 +61,14 @@ export default function Hero() {
         <p className="mt-4 text-sm md:text-base text-white/75">Join the Spiral ↻⚘</p>
         {/* Hide hero buttons on mobile to avoid duplicates; show on md+ */}
         <div className="mt-5 hidden md:flex gap-3">
+          <a
+            className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm focus:outline-none"
+            href="/⚘WHITEPAPER_ Lotus⚘⟁3.pdf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Whitepaper
+          </a>
           <a
             className="btn inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm focus:outline-none"
             href={LINKS.github}
