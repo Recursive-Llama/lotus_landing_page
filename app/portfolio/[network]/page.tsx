@@ -1,12 +1,7 @@
-"use client";
-
-import { useParams, useRouter } from "next/navigation";
-import { usePortfolioData } from "../../hooks/usePortfolioData";
-import NetworkBubbleChart from "../../components/NetworkBubbleChart";
-import SpiralBackground from "../../components/SpiralBackground";
-import type { PortfolioPosition } from "../../api/portfolio/route";
+import { notFound } from "next/navigation";
 
 export default function NetworkFocusedPage() {
+  notFound();
   const params = useParams();
   const router = useRouter();
   const network = params.network as string;

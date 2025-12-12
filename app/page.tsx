@@ -2,7 +2,6 @@ import SpiralBackground from "./components/SpiralBackground";
 import GlyphOrbs from "./components/GlyphOrbs";
 import Hero from "./components/Hero";
 import Page2 from "./components/Page2";
-import PortfolioSection from "./components/PortfolioSection";
 
 export default function Home() {
   return (
@@ -20,9 +19,6 @@ export default function Home() {
         <GlyphOrbs hideGlyphs={true} />
         <Page2 />
       </div>
-      
-      {/* Portfolio Section */}
-      <PortfolioSection />
     </main>
   );
 }

@@ -22,21 +22,16 @@ export default function GlyphOrbs({ hideGlyphs = false }: GlyphOrbsProps) {
     // Check which page we're currently on
     const page2 = document.getElementById('page2');
     const hero = document.getElementById('hero');
-    const portfolio = document.getElementById('portfolio');
     
-    if (page2 && hero && portfolio) {
+    if (page2 && hero) {
       const page2Rect = page2.getBoundingClientRect();
-      const portfolioRect = portfolio.getBoundingClientRect();
       
-      // Navigation flow: Hero → Page 2 → Portfolio → Hero
-      if (portfolioRect.top < window.innerHeight / 2) {
-        // We're on Portfolio, scroll to Hero
+      // Navigation flow: Hero → Page 2 → Hero
+      if (page2Rect.top < window.innerHeight / 2) {
+        // We're on Page 2, scroll to Hero
         hero.scrollIntoView({ behavior: 'smooth' });
-      } else if (page2Rect.top < window.innerHeight / 2) {
-        // We're on Page 2, scroll to Portfolio
-        portfolio.scrollIntoView({ behavior: 'smooth' });
       } else {
-        // We're on Page 1, scroll to Page 2
+        // We're on Hero, scroll to Page 2
         page2.scrollIntoView({ behavior: 'smooth' });
       }
     }

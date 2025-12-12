@@ -1,11 +1,7 @@
-"use client";
-
-import { useState } from "react";
-import { usePortfolioData } from "../../hooks/usePortfolioData";
-import NetworkBubbleChart from "../../components/NetworkBubbleChart";
-import SpiralBackground from "../../components/SpiralBackground";
+import { notFound } from "next/navigation";
 
 export default function PastPerformancePage() {
+  notFound();
   const { portfolioData, loading, error } = usePortfolioData();
   const [hoveredPosition, setHoveredPosition] = useState<{ id: string; token_ticker: string; token_chain: string; total_pnl_usd: number; total_pnl_pct: number; current_invested_usd: number; total_quantity: number } | null>(null);
 

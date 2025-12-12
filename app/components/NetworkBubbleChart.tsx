@@ -363,10 +363,8 @@ export default function NetworkBubbleChart({ positions, closedPositions = [], na
     
     if (onNetworkClick) {
       onNetworkClick(networkData.network);
-    } else {
-      // Default navigation to network-focused page
-      window.location.href = `/portfolio/${networkData.network}`;
     }
+    // Portfolio navigation disabled
   };
 
   const handleBubbleHover = (networkData: { network: string; positions?: PortfolioPosition[] }) => {
